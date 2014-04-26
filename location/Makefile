@@ -1,0 +1,3 @@
+BIN= pyloceq
+
+include $(ANTELOPEMAKE)
