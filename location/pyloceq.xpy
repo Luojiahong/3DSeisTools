@@ -6,8 +6,8 @@ def _main():
                                  parse_cfg
     from antelope.datascope import closing, dbopen
     args = _parse_command_line()
-    if args.pf: pf_2_cfg(args.pf, 'pyloceq')
-    else: pf_2_cfg('pyloceq', 'pyloceq')
+    pf_2_cfg(args.pf, 'pyloceq')
+    #else: pf_2_cfg('pyloceq', 'pyloceq')
     cfg_dict = parse_cfg('pyloceq.cfg')
     locator = Locator(cfg_dict)
     with closing(dbopen(args.db, 'r+')) as db:
