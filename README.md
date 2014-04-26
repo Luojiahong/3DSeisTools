@@ -39,11 +39,11 @@ sh$: vi Makefile
   
 Now edit the 7th line to refer to the Fortran compiler of your choice:
   
-*...*  
-*6*  
-*7* f90comp = gfortran
-*8*  
-*...*
+...  
+6  
+7  f90comp = gfortran  
+8  
+...
   
 Compile the *fm3d* code.
   
