@@ -1,0 +1,3 @@
+DIRS=location
+
+include $(ANTELOPEMAKE)
