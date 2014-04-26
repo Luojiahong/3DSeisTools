@@ -8,10 +8,13 @@ propagation modelling code by Nick Rawlinson
 (http://rses.anu.edu.au/seismology/soft/fmmcode/)
 
 #Installation
-###Step 1: Install pure Python package **anfseistools**
+###Step 1: Install pure Python package *anfseistools*
 sh$: cd .../3DSeisTools  
 sh$: python setup.py install
 
-###Step 2: Compile and install external Fortran dependancy **fm3d**
+###Step 2: Install Antelope wrapper software components
+sh$: make install
+
+###Step 3: Compile and install external Fortran dependancy *fm3d*
 ...Instructions to come...
 
