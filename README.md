@@ -1,8 +1,11 @@
 #Introduction
-This package of tools is intended to interface Earthquake location and 
+This software package is intended to interface Earthquake location and 
 focal mechanism inversion routines (using a 3-D velocity model) with a 
 CSS3.0 schema database via the Antelope software package distributed by 
-BRTT (http://www.brtt.com).
+BRTT (http://www.brtt.com). This software package is not intimately 
+dependant on, but heavily structured around the use of 3D wavefront 
+propagation modelling code by Nick Rawlinson 
+(http://rses.anu.edu.au/seismology/soft/fmmcode/)
 
 #Installation
 ###Step 1: Install pure Python package **anfseistools**
