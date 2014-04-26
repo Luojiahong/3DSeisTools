@@ -49,3 +49,8 @@ sh$: make fm3d
 choice.
   
 sh$: cp fm3d /usr/local/bin
+
+- There are a set of input files needed by *fm3d*. Now is a good time to 
+copy them into a data directory.
+  
+sh$: cp \*.in foo/fm3d\_input\_files/
