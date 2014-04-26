@@ -9,7 +9,7 @@ Installation
 ============
 Step 1: Install pure Python package **anfseistools**
 ----------------------------------------------------
-sh$: cd .../3DSeisTools
+sh$: cd .../3DSeisTools  
 sh$: python setup.py install
 
 Step 2: Compile and install external Fortran dependancy **fm3d**
