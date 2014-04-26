@@ -12,7 +12,7 @@ propagation modelling code by Nick Rawlinson
 Installing the pure Python component of this software package is a simple 
 one liner from within the top-level directory of this repository.
 
-sh$: cd .../3DSeisTools  
+sh$: cd foo/3DSeisTools  
 sh$: python setup.py install
 
 ###Step 2: Install Antelope wrapper software components
