@@ -24,7 +24,7 @@ sh$: make install
 ###Step 3: Compile and install external Fortran dependancy *fm3d*
 Installing the Fortran dependancy is slightly more involved, but pretty 
 straight forward. A gunzipped tar ball is included for convenience, but 
-can be downloaded at http://rses.anu.edu.au/seismology/soft/fmmcode/. 
+can be downloaded at http://rses.anu.edu.au/seismology/soft/fmmcode/.  
 Navigate into the *fm3d* directory.
   
 sh$: cd fm3d
@@ -39,7 +39,11 @@ sh$: vi Makefile
   
 Now edit the 7th line to refer to the Fortran compiler of your choice:
   
-EG.  f90comp = gfortran
+*...*  
+*6*  
+*7* f90comp = gfortran
+*8*  
+*...*
   
 Compile the *fm3d* code.
   
