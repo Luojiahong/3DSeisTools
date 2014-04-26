@@ -3,7 +3,8 @@ import os
 from antelope.datascope import DbfindEnd,\
                                dbTABLE_FIELDS,\
                                dbTABLE_NAME
-from antelope.stock import pfin
+from antelope.stock import pfin,\
+                           pfread
 import antpy
 
 def create_event_list(view):
@@ -241,7 +242,6 @@ def map_null_values(table, obj):
 def pf_2_cfg(pf, config_file):
     import ConfigParser
     config_file = '%s.cfg' % config_file
-    pf = '%s.pf' % pf
     if os.path.isfile(config_file):
         try:
             os.remove(config_file)
@@ -251,7 +251,8 @@ def pf_2_cfg(pf, config_file):
             sys.exit(-1)
     config = ConfigParser.RawConfigParser()
     config.add_section('misc')
-    pf = pfin('%s' % pf)
+    if pf: pf = pfin('%s.pf' % pf)
+    else: pf = pfread(sys.argv[0])
     for key1 in pf.keys():
         if isinstance(pf[key1], dict):
             config.add_section(key1)
