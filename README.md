@@ -25,27 +25,27 @@ sh$: make install
 Installing the Fortran dependancy is slightly more involved, but pretty 
 straight forward. A gunzipped tar ball is included for convenience, but 
 can be downloaded at http://rses.anu.edu.au/seismology/soft/fmmcode/.  
-Navigate into the *fm3d* directory.
+- Navigate into the *fm3d* directory.
   
 sh$: cd fm3d
   
-Unzip and extract the gunzipped tar ball.
+- Unzip and extract the gunzipped tar ball.
   
 sh$: gunzip -c fm3d\_07.tar.gz. | tar xvof -
   
-Then open the Makefile for editing.
+- Then open the Makefile for editing.
   
 sh$: vi Makefile
   
-Now edit the 7th line to refer to the Fortran compiler of your choice:
+- Now edit the 7th line to refer to the Fortran compiler of your choice:
   
 f90comp = gfortran  
   
-Compile the *fm3d* code.
+- Compile the *fm3d* code.
   
 sh$: make fm3d
   
-And finally copy the executable to a directory on your $PATH, of your 
+- And finally copy the executable to a directory on your $PATH, of your 
 choice.
   
 sh$: cp fm3d /usr/local/bin
