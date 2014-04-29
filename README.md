@@ -19,11 +19,11 @@ sh$: python setup.py install
 - Clone *malcolmw\/toolbox.git*
 ```
 sh$: cd foo/git_repos
-sh$: git clone https://github.com/malcolmw/toolbox.git
+sh$: git clone https://github.com/malcolmw/toolbox.git malcolmw_toolbox
 ```
 - Navigate to *antpy* directory and install.
 ```
-sh$: cd antpy
+sh$: cd malcolmw_toolbox/antpy
 sh$: python setup.py install
 ```
 ###Step 3: Install Antelope wrapper software components
