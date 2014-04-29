@@ -31,7 +31,7 @@ sh$: cd fm3d
 ```
 - Unzip and extract the gunzipped tar ball.
 ```
-sh$: gunzip -c fm3d\_07.tar.gz. | tar xvof -
+sh$: gunzip -c fm3d_07.tar.gz. | tar xvof -
 ```
 - Then open the Makefile for editing.
 ```
@@ -53,7 +53,7 @@ sh$: cp -r fm3d /usr/local/bin
 This is done through your .bash\_profile or .bashrc if the shell you are using is 
 bash, .tcshrc if you are using csh etc...
 ```
-sh$: vi ~/.bash\_profile
+sh$: vi ~/.bash_profile
 ```
 ```
 export PATH=/usr/local/bin/fm3d:$PATH
@@ -62,5 +62,5 @@ export PATH=/usr/local/bin/fm3d:$PATH
 - There are a set of input files needed by *fm3d*. Now is a good time to 
 copy them into a data directory.
 ```
-sh$: cp \*.in foo/fm3d\_input\_files/
+sh$: cp *.in foo/fm3d_input_files/
 ```
