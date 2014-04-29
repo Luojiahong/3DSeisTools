@@ -50,8 +50,8 @@ sh$: make fm3d
 sh$: cp -r fm3d /usr/local/bin
 ```
 - Add the path to the fm3d code to your $PATH environment variable. 
-This is done through your ~/.bash\_profile if the shell you are using is 
-bash, ~/.tcsh\_profile if you are using csh etc...
+This is done through your .bash\_profile or .bashrc if the shell you are using is 
+bash, .tcshrc if you are using csh etc...
 ```
 sh$: vi ~/.bash\_profile
 ```
