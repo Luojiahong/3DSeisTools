@@ -11,17 +11,28 @@ propagation modelling code by Nick Rawlinson
 ###Step 1: Install pure Python package *anfseistools*
 Installing the pure Python component of this software package is a simple 
 one liner from within the top-level directory of this repository.
-
+```
 sh$: cd foo/3DSeisTools  
 sh$: python setup.py install
-
-###Step 2: Install Antelope wrapper software components
+```
+###Step 2: Install miscellaneous Antelope/Python API convenience package.
+- Clone *malcolmw\/toolbox.git*
+```
+sh$: cd foo/git_repos
+sh$: git clone https://github.com/malcolmw/toolbox.git
+```
+- Navigate to *antpy* directory and install.
+```
+sh$: cd antpy
+sh$: python setup.py install
+```
+###Step 3: Install Antelope wrapper software components
 Similarly, installing the Antelope wrappers, via the standard Antelope 
 Makefile procedure, is a one liner from the same top-level directory.
 
 sh$: make install
 
-###Step 3: Compile and install external Fortran dependancy *fm3d*
+###Step 4: Compile and install external Fortran dependancy *fm3d*
 Installing the Fortran dependancy is slightly more involved, but pretty 
 straight forward. A gunzipped tar ball is included for convenience, but 
 can be downloaded at http://rses.anu.edu.au/seismology/soft/fmmcode/.  
