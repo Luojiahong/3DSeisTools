@@ -5,7 +5,8 @@ import time
 import subprocess
 from anfseistools.core import Station, num
 
-tt_calculator = '/Users/mcwhite/src/3DSeisTools/fm3d/fm3d'
+#tt_calculator = '/Users/mcwhite/src/3DSeisTools/fm3d/fm3d'
+tt_calculator = 'fm3d'
 def _main():
     from anfseistools.ant import  pf_2_cfg
     from anfseistools.core import parse_cfg
