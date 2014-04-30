@@ -80,7 +80,8 @@ This step is not necessary for Earthquake location inversion, only for
 focal mechanism inversion.
 - If you don't have *numpy*, install it first, the *hashpy* module uses 
 numpy.distutils.core to compile Fortran code. The most recent version 
-for your platform should work. If you are using *pip*.
+for your platform should work. If you are using *pip*, this is a one 
+liner.
 ```
 pip install numpy
 ```
