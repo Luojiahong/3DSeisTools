@@ -1,5 +1,9 @@
-import os
-import time
+"""
+A submodule to provide core functionality and classes needed by various
+software components in the 3DSeisTools package.
+"""
+if 'os' not in locals(): import os
+if 'time' not in locals(): import time
 from numpy import * #Should probably be more specific
 #from matplotlib import pyplot as plt
 #from array import array #This is for fast io when writing binary #AAA MAY NEED TO DELETE
@@ -18,21 +22,56 @@ def num(s):
 
 def parse_cfg(config_file):
     """
-    Parse (.cfg) configuration file and return dictionary of contents.
+    Parse .cfg configuration file and return dictionary of contents.
 
     Arguments:
-    config_file - path to configuration file.
+    config_file - Path to configuration file.
+
+    Returns:
+    mydict - Dictionary of parameters parsed from config_file.
+
+    Example:
+    In [1]: from anfseistools.core import parse_cfg
+
+    In [2]: cfg_dict = parse_cfg('test_pf_2_cfg.cfg')
+
+    In [3]: print cfg_dict
+    {'misc': {'earth_radius': 6371.0,
+              'tt_map_dir': '/Users/mcwhite/staging/tt_maps/June2010/'
+             },
+             'propagation_grid': {'minlon': -117.80,
+                                  'dlon': 0.0327,
+                                  'nlat': 76,
+                                  'minlat': 32.5,
+                                  'minz': 3.0,
+                                  'dlat': 0.0273,
+                                  'nr': 25,
+                                  'dr': 2.0,
+                                  'nlon': 73,
+                                  'refinement_factor': 5,
+                                  'ncells': 10
+                                  },
+             'location_parameters': {'buff1': 7,
+                                     'buff2': 7,
+                                     'dstep1': 5,
+                                     'dstep2': 5,
+                                     'nlat': 73,
+                                     'nr': 25,
+                                     'nlon': 76
+                                     }
+    }
     """
     import ConfigParser
+    from antpy import eval_dict
     config = ConfigParser.RawConfigParser()
     config.read(config_file)
-    return_dict = {}
+    mydict = {}
     for section in config.sections():
         section_dict = {}
         for option in config.options(section):
             section_dict[option] = config.get(section, option)
-        return_dict[section] = section_dict
-    return return_dict
+        mydict[section] = section_dict
+    return eval_dict(mydict)
 
 def load_faults():
     """
@@ -355,13 +394,17 @@ def _grid_search_traveltimes_origin(arrsta, qx, qy, qz, arrvec, li):
 
 
 class Locator:
+    """
+    An object class to provide functionality to locate Earthquakes.
+    Location parameter configuration is stored in this object class.
+    """
     def __init__(self, cfg_dict):
         """
         Initialize locator object with a dictionary of paramaters
-        parsed from .cfg file by core_tools.parse_cfg().
+        parsed from .cfg file by anfseistools.core.parse_cfg().
 
         Arguments:
-        cfg_dict - <dict> returned by core_tools.parse_cfg()
+        cfg_dict - Dictionary returned by anfseistools.core.parse_cfg()
         """
         for key in cfg_dict:
             setattr(self, key, cfg_dict[key])
@@ -373,21 +416,21 @@ class Locator:
         """
         loc_params = self.location_parameters
         prop_params = self.propagation_grid
-        earth_rad = float(self.misc['earth_radius'])
+        earth_rad = self.misc['earth_radius']
         #earth_rad = 6371.0
 
 
         #Get Propagation grid paramters
-        nlat = int(prop_params['nlat'])
-        nlon = int(prop_params['nlon'])
-        nz = int(prop_params['nr'])
+        nlat = prop_params['nlat']
+        nlon = prop_params['nlon']
+        nz = prop_params['nr']
         li  =  LinearIndex(nlon, nlat, nz)
-        olon = float(prop_params['minlon'])
-        olat = float(prop_params['minlat'])
-        oz = float(prop_params['minz'])
-        dlon = float(prop_params['dlon'])
-        dlat = float(prop_params['dlat'])
-        dz = float(prop_params['dr'])
+        olon = prop_params['minlon']
+        olat = prop_params['minlat']
+        oz = prop_params['minz']
+        dlon = prop_params['dlon']
+        dlat = prop_params['dlat']
+        dz = prop_params['dr']
 
         #Build vectors of geographic coordinates
         qlon = linspace(olon,dlon * nlon + olon,nlon,False)
@@ -696,15 +739,27 @@ class LinearIndex():
 
 class Station:
     """
-    A containter class for station location data.
+    A container class for station location data.
     """
     def __init__(self, sta, lat, lon, elev):
+        """
+        Initialize Station object.
+
+        Arguments:
+        sta - Station code.
+        lat - Station latitude.
+        lon - Station longitude.
+        elev - Statio elevation.
+        """
         self.sta = sta
         self.lat = lat
         self.lon = lon
         self.elev = elev
 
     def __str__(self):
+        """
+        Return string representation of self object.
+        """
         ret = 'Station Object\n--------------\n'
         ret += 'sta:\t\t%s\n' % self.sta
         ret += 'lat:\t\t%s\n' % self.lat
@@ -714,11 +769,12 @@ class Station:
 
 class Event():
     """
-    A container class for earthquake event metadata.
+    A container class for Earthquake event data. Mirrors the Event
+    table of the CSS3.0 databse schema.
     """
     #def __init__(self, time, lat, lon, depth, mag, magtype=None, evid=None):
     def __init__(self,
-                 prefor,
+                 prefor=None,
                  evid=None,
                  evname=None,
                  auth=None,
@@ -726,20 +782,93 @@ class Event():
                  lddate=None,
                  origins=None):
         """
-        Initialize Event object using one of two possible inputs.
+        Initialize Event object.
+
+        Arguments:
+        prefor - Preferred origin ID.
+
+        Keyword Arguments:
+        evid - Event ID.
+        evname - Event author.
+        commid - Comment ID.
+        lddate - Load date.
+        origins - List of anfseistools.core.Origin objects.
+
+        Example:
+        In [1]: from anfseistools.core import Event, Origin
+
+        In [2]: origin = Origin(33.4157,
+                                -116.8622,
+                                4.8910,
+                                1275439331.718,
+                                orid=287456,
+                                nass=47,
+                                ndef=47,
+                                auth='ANF:vernon',
+                                evid=202856,
+                                algorithm='locsat:iasp91')
+
+        In [3]: event = Event(prefor=287456,
+                              evid=202856,
+                              auth='ANF:vernon',
+                              origins=[origin])
+
+        In [4]: print event
+        Event Object
+        ------------
+        evid:       202856
+        evname:     None
+        prefor:     287456
+        auth:       ANF:vernon
+        commid:     None
+        lddate:     None
+        origins:
+                    Origin Object
+                    -------------
+                    lat:        33.4157
+                    lon:        -116.8622
+                    depth:      4.891
+                    time:       1275439331.72
+                    orid:       287456
+                    evid:       202856
+                    auth:       ANF:vernon
+                    jdate:      None
+                    nass:       47
+                    ndef:       47
+                    ndp:        None
+                    grn:        None
+                    srn:        None
+                    etype:      None
+                    review:     None
+                    depdp:      None
+                    dtype:      None
+                    mb:     None
+                    mbid:       None
+                    ms:     None
+                    msid:       None
+                    None
+                    mlid:       None
+                    algorithm:      locsat:iasp91
+                    commid:     None
+                    lddate:     None
+                    arrivals:
         """
         import time as pytime
         self.evid = evid
         self.evname = evname
-        self.prefor = prefor
         self.auth = auth
         self.commid = commid
         self.lddate = lddate
         self.preferred_origin = None
         if origins == None: self.origins = []
         else: self.origins = origins
+        self.set_prefor(prefor)
 
     def __str__(self):
+        """
+        Return the string representation of anfseistools.core.Event
+        object.
+        """
         ret = 'Event Object\n------------\n'
         ret += 'evid:\t\t%s\n' % self.evid
         ret += 'evname:\t\t%s\n' % self.evname
@@ -756,10 +885,106 @@ class Event():
                     ret += '\t\t%s\n' % line
         return ret
 
-    def set_preferred_origin(self, prefor):
+    def set_prefor(self, prefor):
         """
-        Set self.preferred_origin to equal origin with orid == prefor.
+        Set self.prefor equal to new origin ID and set
+        self.preferred_origin to point to the anfseistools.core.Origin
+        object referred to by that origin ID.
+
+        Arguments:
+        prefor - The origin ID (orid) of the preferred solution.
+
+        Example:
+        In [1]: from anfseistools.core import Event, Origin
+
+        In [2]: origin1 = Origin(43.7000,
+                                 -79.4000,
+                                 5.0,
+                                 1398883850.648,
+                                 'White',
+                                 orid=1234,
+                                 evid=1001)
+
+        In [3]: origin2 = Origin(43.7050,
+                                 -79.3981,
+                                 7.3,
+                                 1398883851.346,
+                                 'White',
+                                 orid=1235,
+                                 evid=1001)
+
+        In [4]: event = Event(prefor=1234,
+                              evid=1001,
+                              auth='White',
+                              origins=[origin1, origin2])
+
+        In [5]: print event.preferred_origin
+        Origin Object
+        -------------
+        lat:        43.7
+        lon:        -79.4
+        depth:      5.0
+        time:       1398883850.65
+        orid:       1234
+        evid:       1001
+        auth:       White
+        jdate:      None
+        nass:       None
+        ndef:       None
+        ndp:        None
+        grn:        None
+        srn:        None
+        etype:      None
+        review:     None
+        depdp:      None
+        dtype:      None
+        mb:     None
+        mbid:       None
+        ms:     None
+        msid:       None
+        ml:     None
+        mlid:       None
+        algorithm:      None
+        commid:     None
+        lddate:     None
+        arrivals:
+
+
+        In [6]: event.set_prefor(1235)
+        Out[6]: 0
+
+        In [7]: print event.preferred_origin
+        Origin Object
+        -------------
+        lat:        43.705
+        lon:        -79.3981
+        depth:      7.3
+        time:       1398883851.35
+        orid:       1235
+        evid:       1001
+        auth:       White
+        jdate:      None
+        nass:       None
+        ndef:       None
+        ndp:        None
+        grn:        None
+        srn:        None
+        etype:      None
+        review:     None
+        depdp:      None
+        dtype:      None
+        mb:     None
+        mbid:       None
+        ms:     None
+        msid:       None
+        ml:     None
+        mlid:       None
+        algorithm:      None
+        commid:     None
+        lddate:     None
+        arrivals:
         """
+        self.prefor = prefor
         for i in range(len(self.origins)):
             if self.origins[i].orid == prefor:
                 self.preferred_origin = self.origins[i]
@@ -799,7 +1024,90 @@ class Event():
                    commid=None,
                    lddate=None):
         """
-        Add an Origin object to the list of origins associated with this event.
+        Add an anfseistools.core.Origin object to the list of origins
+        associated with this event.
+
+        Arguments:
+        lat - Latitude of Earthquake hypocenter.
+        lon - Longitude of Earthquake hypocenter.
+        depth - Depth of Earthquake hypocenter.
+        time - Epoch time of Earthquake rupture.
+
+        Keyword Arguments:
+        These need to be FULLY described here. Procastinating on this,
+        see below.  These fields are optional and exist for posterity
+        and to mirror the Origin table of the CSS3.0 schema in whole.
+        Refer to CSS3.0 schema for details
+        (https://anf.ucsd.edu/pdf/css30.pdf).
+
+        Example:
+        In [1]: from anfseistools.core import Event
+
+        In [2]: event = Event(prefor=287456, evid=202856, auth='ANF:vernon')
+
+        In [3]: print event
+        Event Object
+        ------------
+        evid:       202856
+        evname:     None
+        prefor:     287456
+        auth:       ANF:vernon
+        commid:     None
+        lddate:     None
+        origins:
+                    None
+
+
+        In [4]: event.add_origin(33.4157,
+                                 -116.8622,
+                                 4.8910,
+                                 1275439331.718,
+                                 orid=287456,
+                                 nass=47,
+                                 ndef=47,
+                                 auth='ANF:vernon',
+                                 evid=202856,
+                                 algorithm='locsat:iasp91')
+
+        In [5]: print event
+        Event Object
+        ------------
+        evid:       202856
+        evname:     None
+        prefor:     287456
+        auth:       ANF:vernon
+        commid:     None
+        lddate:     None
+        origins:
+                    Origin Object
+                    -------------
+                    lat:        33.4157
+                    lon:        -116.8622
+                    depth:      4.891
+                    time:       1275439331.72
+                    orid:       287456
+                    evid:       202856
+                    auth:       ANF:vernon
+                    jdate:      None
+                    nass:       47
+                    ndef:       47
+                    ndp:        None
+                    grn:        None
+                    srn:        None
+                    etype:      None
+                    review:     None
+                    depdp:      None
+                    dtype:      None
+                    mb:     None
+                    mbid:       None
+                    ms:     None
+                    msid:       None
+                    ml:     None
+                    mlid:       None
+                    algorithm:      locsat:iasp91
+                    commid:     None
+                    lddate:     None
+                    arrivals:
         """
         self.origins += [Origin(lat,
                                 lon,
@@ -828,31 +1136,10 @@ class Event():
                                 algorithm=algorithm,
                                 commid=commid,
                                 lddate=lddate)]
-    def write(self, out, fmt):
-        """
-        Write out newly authored data pertaining to event.
-
-        Arguments:
-        out - A datascope db pointer to an open CSS3.0 database for output.
-        Alternatively the path to an output SCEDC format flat file.
-
-        fmt - The format of the 'out' argument; 'CSS3.0' or 'SCEDC'.
-
-        Return Values:
-        0 - Success
-        -1 - Failure
-        """
-        if fmt == 'CSS3.0':
-            return self._write_CSS()
-        elif fmt == 'SCEDC':
-            #Do it the SCEDC way
-            pass
-        else:
-            raise Exception('Output format %s not recognized' % fmt)
-
 class Origin():
     """
-    A container class for origin data.
+    A container class for Earthquake event data. Mirrors the Origin
+    table of the CSS3.0 databse schema.
     """
     def __init__(self,
                  lat,
@@ -882,6 +1169,77 @@ class Origin():
                  algorithm=None,
                  commid=None,
                  lddate=None):
+        """
+        Initialize Origin object.
+
+        Arguments:
+        lat - Latitude of Earthquake hypocenter.
+        lon - Longitude of Earthquake hypocenter.
+        depth - Depth of Earthquake hypocenter.
+        time - Epoch time of Earthquake rupture.
+
+        Keyword Arguments:
+        These need to be FULLY described here. Procastinating on this,
+        see below.  These fields are optional and exist for posterity
+        and to mirror the Origin table of the CSS3.0 schema in whole.
+        Refer to CSS3.0 schema for details
+        (https://anf.ucsd.edu/pdf/css30.pdf).
+
+        Example:
+        In [1]: from anfseistools.core import Origin, Phase
+
+        In [2]: arrivals = [Phase('SND',
+                                  1276817657.230,
+                                  'P',
+                                  chan='HHZ')]
+
+        In [3]: arrivals += [Phase('FRD',
+                                   1276817656.000,
+                                   'P',
+                                   chan='HHZ')]
+
+        In [4]: origin = Origin(32.7103,
+                                -115.9378,
+                                3.44,
+                                1276817637.470,
+                                'White',
+                                orid=235993,
+                                evid=2010168,
+                                nass=6,
+                                ndef=64)
+
+        In [5]: print origin
+        Origin Object
+        -------------
+        lat:        32.7103
+        lon:        -115.9378
+        depth:      3.44
+        time:       1276817637.47
+        orid:       235993
+        evid:       2010168
+        auth:       White
+        jdate:      None
+        nass:       6
+        ndef:       64
+        ndp:        None
+        grn:        None
+        srn:        None
+        etype:      None
+        review:     None
+        depdp:      None
+        dtype:      None
+        mb:     None
+        mbid:       None
+        ms:     None
+        msid:       None
+        ml:     None
+        mlid:       None
+        algorithm:      None
+        commid:     None
+        lddate:     None
+        arrivals:
+        """
+
         self.lat = lat
         self.lon = lon
         self.depth = depth
@@ -912,7 +1270,8 @@ class Origin():
 
     def __str__(self):
         """
-        Return string representation of Origin object.
+        Returns the string representation of anfseistools.core.Origin
+        object.
         """
         ret = 'Origin Object\n-------------\n'
         ret += 'lat:\t\t%s\n' % self.lat
@@ -948,69 +1307,205 @@ class Origin():
 
     def update_predarr_times(self, cfg_dict):
         """
-        Update the Phase.tt_calc and Phase.predarr fields for each
-        Phase object in Origin.arrivals field.
+        Update the anfseistools.core.Phase.tt_calc and
+        anfseistools.core.Phase.predarr fields for each Phase object in
+        anfseistools.core.Origin object's arrivals attribute.
+
+        Arguments:
+        cfg_dict - Configuration dictionary as returned by
+        anfseistools.core.parse_cfg()
+
+        Caveats:
+        This functionality is currently only implemented for P-wave
+        arrivals.
+
+        Example:
+        In [1]: import sys
+
+        In [2]: import os
+
+        In [3]: sys.path.append('%s/data/python' % os.environ['ANTELOPE'])
+
+        In [4]: from antelope.datascope import closing, dbopen
+
+        In [5]: import anfseistools.core as core
+
+        In [6]: import anfseistools.ant as ant
+
+        In [7]: cfg_dict = core.parse_cfg('test_pf_2_cfg.cfg')
+
+        In [8]: locator = core.Locator(cfg_dict)
+
+        In [9]: with closing(dbopen('/Users/mcwhite/staging/dbs/' \
+                                    'June2010/June2010', 'r')) as db:
+           ...:     tbl_event = db.schema_tables['event']
+           ...:     tbl_event = tbl_event.subset('evid == 202856')
+           ...:     events = ant.create_event_list(tbl_event)
+           ...:
+
+       In [10]: new_origin = locator.locate_eq(events[0].preferred_origin)
+
+       In [11]: for arrival in new_origin.arrivals:
+          ....:     print arrival.phase, arrival.predarr
+          ....:
+        S None
+        P None
+        S None
+        P None
+        P None
+        S None
+        P None
+        S None
+        P None
+        S None
+        P None
+        S None
+        S None
+        S None
+        P None
+        S None
+        S None
+        S None
+        S None
+        S None
+        S None
+        P None
+        S None
+        S None
+        P None
+        S None
+        P None
+        S None
+        P None
+        S None
+        P None
+        S None
+        P None
+        S None
+        P None
+        S None
+        P None
+        S None
+        P None
+        S None
+        P None
+        S None
+        S None
+        S None
+        P None
+        S None
+        P None
+
+        In [12]: new_origin.update_predarr_times(cfg_dict)
+        Out[12]: 0
+
+        In [13]: for arrival in new_origin.arrivals:
+            ...:     print arrival.phase, arrival.predarr
+            ...:
+        S None
+        P 1275439337.07
+        S None
+        P 1275439337.66
+        P 1275439338.11
+        S None
+        P 1275439338.22
+        S None
+        P 1275439338.29
+        S None
+        P 1275439339.54
+        S None
+        S None
+        S None
+        P 1275439339.66
+        S None
+        S None
+        S None
+        S None
+        S None
+        S None
+        P 1275439344.33
+        S None
+        S None
+        P 1275439337.06
+        S None
+        P 1275439335.57
+        S None
+        P 1275439335.58
+        S None
+        P 1275439335.84
+        S None
+        P 1275439336.15
+        S None
+        P 1275439336.19
+        S None
+        P 1275439336.4
+        S None
+        P 1275439336.6
+        S None
+        P 1275439336.6
+        S None
+        S None
+        S None
+        P 1275439337.19
+        S None
+        P 1275439333.59
         """
         from numpy import linspace
         #Get Propagation grid paramters
         ttdir = cfg_dict['misc']['tt_map_dir']
         prop_params = cfg_dict['propagation_grid']
-        earth_rad = float(cfg_dict['misc']['earth_radius'])
-        nlat = int(prop_params['nlat'])
-        nlon = int(prop_params['nlon'])
-        nz = int(prop_params['nr'])
+        earth_rad = cfg_dict['misc']['earth_radius']
+        nlat = prop_params['nlat']
+        nlon = prop_params['nlon']
+        nz = prop_params['nr']
         li  =  LinearIndex(nlon, nlat, nz)
-        olon = float(prop_params['minlon'])
-        olat = float(prop_params['minlat'])
-        oz = float(prop_params['minz'])
-        dlon = float(prop_params['dlon'])
-        dlat = float(prop_params['dlat'])
-        dz = float(prop_params['dr'])
+        olon = prop_params['minlon']
+        olat = prop_params['minlat']
+        oz = prop_params['minz']
+        dlon = prop_params['dlon']
+        dlat = prop_params['dlat']
+        dz = prop_params['dr']
         #Build vectors of geographic coordinates
-        #qlon = arange(olon, dlon * nlon + olon, dlon)
-        #qlat = arange(olat, dlat * nlat + olat, dlat)
-        #qdep = arange(earth_rad - dz * nz, earth_rad, dz) + oz + dz
         qlon = linspace(olon, dlon * nlon + olon, nlon, False)
         qlat = linspace(olat, dlat * nlat + olat, nlat, False)
-        qdep = earth_rad - linspace(earth_rad+oz-(nz-1)*dz,earth_rad+oz,nz)
-        #print nlat, nlon, nz
-        #print len(qlat), len(qlon), len(qdep)
-        endpoints, indices = find_containing_cube(self.lat, self.lon, self.depth, qlat, qlon, qdep)
-        #for point in endpoints:
-        #    print point
+        qdep = earth_rad - linspace(earth_rad + oz - (nz - 1) * dz,
+                                    earth_rad + oz,
+                                    nz)
+        endpoints, indices = find_containing_cube(self.lat,
+                                                  self.lon,
+                                                  self.depth,
+                                                  qlat,
+                                                  qlon,
+                                                  qdep)
         for arrival in self.arrivals:
             if arrival.phase == 'P':
-    #            for index in indices:
-                if not os.path.isfile('%sbin.%s.traveltime' % (ttdir, arrival.sta)):
+                if not os.path.isfile('%sbin.%s.traveltime'
+                        % (ttdir, arrival.sta)):
                     continue
                 ttvec = []
                 for i in range(len(indices)):
                     index, endpoint = indices[i], endpoints[i]
-                    #print index
                     li1D = li.get_1D(index[1], index[0], index[2])
                     ttvec += [read_tt_vector([arrival.sta], li1D, ttdir)[0]]
-                #for j in range(len(ttvec)):
-                #    print ttvec[i], endpoints[i]
                 dtt_dlat =  0 if endpoints[1][0] == endpoints[0][0] else\
-                        (ttvec[1] - ttvec[0]) / (endpoints[1][0] - endpoints[0][0])
-                #print endpoints[1][0], endpoints[0][0]
-                #print ttvec[1], ttvec[0]
-                #print (ttvec[1] - ttvec[0]) / (endpoints[1][0] - endpoints[0][0])
+                        (ttvec[1] - ttvec[0]) / \
+                        (endpoints[1][0] - endpoints[0][0])
                 dtt_dlon = 0 if endpoints[3][1] == endpoints[0][1] else\
-                        (ttvec[3] - ttvec[0]) / (endpoints[3][1] - endpoints[0][1])
+                        (ttvec[3] - ttvec[0]) / \
+                        (endpoints[3][1] - endpoints[0][1])
                 dtt_ddep = 0 if endpoints[4][2] == endpoints[0][2] else\
-                        (ttvec[4] - ttvec[0]) / (endpoints[4][2] - endpoints[0][2])
+                        (ttvec[4] - ttvec[0]) / \
+                        (endpoints[4][2] - endpoints[0][2])
                 delta_lon = self.lon - endpoints[0][1]
                 delta_lat = self.lat - endpoints[0][0]
-                #delta_rad = (earth_rad - self.depth) - endpoints[0][2]
                 delta_dep = self.depth - endpoints[0][2]
                 tt = ttvec[0] + (dtt_dlon * delta_lon)\
                             + (dtt_dlat * delta_lat)\
                             + (dtt_ddep * delta_dep)
-                #print arrival.time - self.time, tt
                 predarr = self.time + tt
                 arrival.tt_calc = tt
                 arrival.predarr = predarr
+        return 0
 
 class Phase():
     """

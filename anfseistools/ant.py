@@ -138,7 +138,7 @@ def create_event_list(view):
                              algorithm=algorithm,
                              commid=commid,
                              lddate=lddate)
-        if event.set_preferred_origin(event.prefor) < 0:
+        if event.set_prefor(event.prefor) < 0:
             continue
         event_list += [event]
     return event_list
