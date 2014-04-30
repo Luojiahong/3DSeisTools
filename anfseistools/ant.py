@@ -211,10 +211,10 @@ def create_station_list(view):
 
 def write_origin(origin, dbout):
     """
-    Write an anfseistools.core.Origin to an output databse.
+    Write an anfseistools.core.Origin object to an output databse.
 
     Arguments:
-    origin - A anfseistools.core.Origin object to be written out.
+    origin - An anfseistools.core.Origin object to be written out.
     dbout - A datascope database pointer to an open output database.
 
     Returns:
@@ -224,10 +224,56 @@ def write_origin(origin, dbout):
     Behaviour:
     This method does NOT open or close the database passed in.
 
-    Additional Comments:
+    Caveats:
     This method assumes that the database being written out is the
     same as the input database (ie. NO arrival rows are created, they are
     assumed to already exist).
+
+    Example:
+
+    In [1]: import sys
+
+    In [2]: import os
+
+    In [3]: sys.path.append('%s/data/python' % os.environ['ANTELOPE'])
+
+    In [4]: from antelope.datascope import closing, dbopen
+
+    In [5]: from anfseistools.core import Origin, Phase
+
+    In [6]: from anfseistools.ant import write_origin
+
+    In [7]: arrivals = []
+
+    In [8]: arrivals += [Phase('SCAR',
+                               597649500.000,
+                               'P',
+                               chan='BHZ',
+                               deltim=0.250,
+                               arid=1001)]
+
+    In [9]: arrivals += [Phase('SAN',
+                               1398876096.594,
+                               'P',
+                               chan='HHZ',
+                               deltim=0.175,
+                               arid=1002)]
+
+    In [10]: origin = Origin(48.4222,
+                             -123.3657,
+                             35.0,
+                             1267390800.000,
+                             'white',
+                             arrivals=arrivals,
+                             orid=1001,
+                             evid=1001,
+                             nass=2,
+                             ndef=2)
+
+    In [11]: with closing(dbopen('/Users/mcwhite/staging/dbs/June2010/June2010', 'r+')) as db:
+       ....:    write_origin(origin, db)
+       ....:
+    Out[11]: 0
     """
     from time import time
     tbl_origin = dbout.schema_tables['origin']
@@ -309,7 +355,98 @@ def write_origin(origin, dbout):
 
 def map_null_values(table, obj):
     """
-    Maps 'None' field values to appropriate CSS3.0 null field values.
+    Update object attributes with None value to corresponding null
+    value from CSS3.0 schema.
+
+    Arguments:
+    table - A Datascope database pointer to a CSS3.0 table to query for
+    null values.
+    obj - The object to update.
+
+    Returns:
+    obj - The updated object.
+
+    Example:
+    In [1]: import sys
+
+    In [2]: import os
+
+    In [3]: sys.path.append('%s/data/python' % os.environ['ANTELOPE'])
+
+    In [4]: from antelope.datascope import closing, dbopen
+
+    In [5]: from anfseistools.core import Origin
+
+    In [6]: from anfseistools.ant import map_null_values
+
+    In [7]: origin = Origin(48.4222, -123.3657, 35.0, 1267390800.000, 'white')
+
+    In [8]: print origin
+    Origin Object
+    -------------
+    lat:        48.4222
+    lon:        -123.3657
+    depth:      35.0
+    time:       1267390800.0
+    orid:       None
+    evid:       None
+    auth:       white
+    jdate:      None
+    nass:       None
+    ndef:       None
+    ndp:        None
+    grn:        None
+    srn:        None
+    etype:      None
+    review:     None
+    depdp:      None
+    dtype:      None
+    mb:     None
+    mbid:       None
+    ms:     None
+    msid:       None
+    ml:     None
+    mlid:       None
+    algorithm:      None
+    commid:     None
+    lddate:     None
+    arrivals:
+
+    In [9]: with closing(dbopen('/Users/mcwhite/staging/dbs/June2010/June2010', 'r')) as db:
+       ...:      tbl_origin = db.schema_tables['origin']
+       ...:      origin = map_null_values(tbl_origin, origin)
+       ...:
+
+                 In [10]: print origin
+                 Origin Object
+                 -------------
+                 lat:       48.4222
+                 lon:       -123.3657
+                 depth:     35.0
+                 time:      1267390800.0
+                 orid:      -1
+                 evid:      -1
+                 auth:      white
+                 jdate:     -1
+                 nass:      -1
+                 ndef:      -1
+                 ndp:       -1
+                 grn:       -1
+                 srn:       -1
+                 etype:     -
+                 review:        -
+                 depdp:     -999.0
+                 dtype:     -
+                 mb:        -999.0
+                 mbid:      -1
+                 ms:        -999.0
+                 msid:      -1
+                 ml:        -999.0
+                 mlid:      -1
+                 algorithm:     -
+                 commid:        -1
+                 lddate:        -10000000000.0
+                 arrivals:
     """
     from antpy import get_null_value
     for field in table.query(dbTABLE_FIELDS):
@@ -318,7 +455,39 @@ def map_null_values(table, obj):
     return obj
 
 def pf_2_cfg(pf, config_file):
+    """
+    Convert an Antelope .pf parameter file to a generic Python .cfg
+    configuration file.
+
+    Arguments:
+    pf - Path to parameter file or None. If pf is None, the $PFPATH is searched
+    for a parameter file named pyloceq.pf.
+    config_file - Desired path to output configuration file.
+
+    Returns:
+    0 - Success
+
+    Behaviour:
+    This method will read in a parameter file, convert all parameters
+    to .cfg configuration file format equivalent and write out a .cfg
+    file.
+
+    Example:
+    In [1]: from anfseistools.ant import pf_2_cfg
+
+    In [2]: pf_2_cfg(None, 'test_pf_2_cfg')
+    Out[2]: 0
+
+    In [3]: pf_2_cfg('/Users/mcwhite/src/3DSeisTools/location/pyloceq', 'test_pf_2_cfg')
+    Out[3]: 0
+    """
     import ConfigParser
+    if 'sys' not in locals(): import sys
+    if 'os' not in locals(): import os
+    if ('pfin' and 'pfread') not in locals():
+        if '%s/data/python' % os.environ['ANTELOPE'] not in sys.path:
+            sys.path.append('%s/data/python' % os.environ['ANTELOPE'])
+        from antelope.stock import pfin, pfread
     config_file = '%s.cfg' % config_file
     if os.path.isfile(config_file):
         try:
@@ -340,4 +509,5 @@ def pf_2_cfg(pf, config_file):
             config.set('misc', key1, pf[key1])
     with open(config_file, 'w') as config_file:
         config.write(config_file)
+    return 0
 
