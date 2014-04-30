@@ -3,10 +3,12 @@ def _main():
     Standard main() function. Execution control begins here.
     """
     from anfseistools.ant import pf_2_cfg,\
-                                     create_event_list,\
-                                     write_origin
+                                 create_event_list,\
+                                 write_origin
     from anfseistools.core import Locator,\
-                                 parse_cfg
+                                  parse_cfg,\
+                                  verify_config_file
+
     from antelope.datascope import closing, dbopen
     args = _parse_command_line()
     pf_2_cfg(args.pf, 'pyloceq')
