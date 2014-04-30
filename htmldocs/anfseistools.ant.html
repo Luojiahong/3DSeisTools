@@ -1,0 +1,313 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module anfseistools.ant</title>
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="anfseistools.html"><font color="#ffffff">anfseistools</font></a>.ant</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/opt/antelope/python2.7.6/lib/python2.7/site-packages/anfseistools/ant.py">/opt/antelope/python2.7.6/lib/python2.7/site-packages/anfseistools/ant.py</a></font></td></tr></table>
+    <p><tt>A&nbsp;submodule&nbsp;to&nbsp;provide&nbsp;interface&nbsp;CSS3.0&nbsp;schema&nbsp;databases&nbsp;with<br>
+anfseistools.core&nbsp;classes&nbsp;and&nbsp;functionality.<br>
+&nbsp;<br>
+Caveats:<br>
+This&nbsp;submodule&nbsp;is&nbsp;dependant&nbsp;on&nbsp;the&nbsp;5.4&nbsp;version&nbsp;of&nbsp;the&nbsp;Antelope/Python<br>
+API&nbsp;and&nbsp;is&nbsp;not&nbsp;backwards&nbsp;compatible.</tt></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#aa55cc">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Modules</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="antpy.html">antpy</a><br>
+</td><td width="25%" valign=top><a href="os.html">os</a><br>
+</td><td width="25%" valign=top><a href="sys.html">sys</a><br>
+</td><td width="25%" valign=top></td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#eeaa77">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Functions</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl><dt><a name="-create_event_list"><strong>create_event_list</strong></a>(view)</dt><dd><tt>Create&nbsp;and&nbsp;return&nbsp;a&nbsp;list&nbsp;of&nbsp;anfseistools.core.Event&nbsp;objects&nbsp;based&nbsp;on<br>
+a&nbsp;CSS3.0&nbsp;database.<br>
+&nbsp;<br>
+Arguments:<br>
+view&nbsp;-&nbsp;A&nbsp;Datascope&nbsp;database&nbsp;pointer&nbsp;to&nbsp;a&nbsp;(potentially&nbsp;subsetted)&nbsp;view<br>
+of&nbsp;the&nbsp;Event&nbsp;table&nbsp;of&nbsp;the&nbsp;CSS3.0&nbsp;database&nbsp;schema.<br>
+&nbsp;<br>
+Return&nbsp;Values:<br>
+A&nbsp;list&nbsp;of&nbsp;anfseistools.core.Event&nbsp;objects.<br>
+&nbsp;<br>
+Behaviour:<br>
+This&nbsp;method&nbsp;does&nbsp;NOT&nbsp;open&nbsp;or&nbsp;close&nbsp;the&nbsp;database&nbsp;passed&nbsp;in.<br>
+&nbsp;<br>
+Example:<br>
+In&nbsp;[1]:&nbsp;import&nbsp;sys<br>
+&nbsp;<br>
+In&nbsp;[2]:&nbsp;import&nbsp;os<br>
+&nbsp;<br>
+In&nbsp;[3]:&nbsp;sys.path.append('%s/data/python'&nbsp;%&nbsp;os.environ['ANTELOPE'])<br>
+&nbsp;<br>
+In&nbsp;[4]:&nbsp;from&nbsp;antelope.datascope&nbsp;import&nbsp;closing,&nbsp;dbopen<br>
+&nbsp;<br>
+In&nbsp;[5]:&nbsp;from&nbsp;anfseistools.ant&nbsp;import&nbsp;create_event_list<br>
+&nbsp;<br>
+In&nbsp;[6]:&nbsp;with&nbsp;closing(dbopen('/Users/mcwhite/staging/dbs/June2010/June2010',&nbsp;'r'))&nbsp;as&nbsp;db:<br>
+&nbsp;&nbsp;&nbsp;...:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;tbl_event&nbsp;=&nbsp;db.schema_tables['event']<br>
+&nbsp;&nbsp;&nbsp;...:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;tbl_event&nbsp;=&nbsp;tbl_event.subset('evid&nbsp;&lt;&nbsp;202555')<br>
+&nbsp;&nbsp;&nbsp;...:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;events&nbsp;=&nbsp;<a href="#-create_event_list">create_event_list</a>(tbl_event)<br>
+&nbsp;&nbsp;&nbsp;...:<br>
+&nbsp;<br>
+In&nbsp;[7]:&nbsp;for&nbsp;event&nbsp;in&nbsp;events:<br>
+&nbsp;&nbsp;&nbsp;...:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;print&nbsp;event.evid,&nbsp;event.auth<br>
+&nbsp;&nbsp;...:&nbsp;<br>
+202551&nbsp;ANF:vernon<br>
+202553&nbsp;ANF:mabibbins</tt></dd></dl>
+ <dl><dt><a name="-create_station_list"><strong>create_station_list</strong></a>(view)</dt><dd><tt>Create&nbsp;and&nbsp;return&nbsp;a&nbsp;list&nbsp;of&nbsp;anfseistools.core.Station&nbsp;objects.<br>
+&nbsp;<br>
+Arguments:<br>
+view&nbsp;-&nbsp;A&nbsp;datascope&nbsp;database&nbsp;pointer&nbsp;to&nbsp;a&nbsp;(potentially&nbsp;subsetted)&nbsp;view<br>
+of&nbsp;the&nbsp;Site&nbsp;table&nbsp;from&nbsp;the&nbsp;CSS3.0&nbsp;database&nbsp;schema.<br>
+&nbsp;<br>
+Return&nbsp;Values:<br>
+A&nbsp;list&nbsp;of&nbsp;anfseistools.core.Station&nbsp;objects.<br>
+&nbsp;<br>
+Behaviour:<br>
+This&nbsp;method&nbsp;does&nbsp;NOT&nbsp;open&nbsp;or&nbsp;close&nbsp;the&nbsp;database&nbsp;passed&nbsp;in.<br>
+&nbsp;<br>
+Example:<br>
+n&nbsp;[1]:&nbsp;import&nbsp;sys<br>
+&nbsp;<br>
+In&nbsp;[2]:&nbsp;import&nbsp;os<br>
+&nbsp;<br>
+In&nbsp;[3]:&nbsp;sys.path.append('%s/data/python'&nbsp;%&nbsp;os.environ['ANTELOPE'])<br>
+&nbsp;<br>
+In&nbsp;[4]:&nbsp;from&nbsp;antelope.datascope&nbsp;import&nbsp;closing,&nbsp;dbopen<br>
+&nbsp;<br>
+In&nbsp;[5]:&nbsp;from&nbsp;anfseistools.ant&nbsp;import&nbsp;create_station_list<br>
+&nbsp;<br>
+In&nbsp;[6]:&nbsp;with&nbsp;closing(dbopen('/Users/mcwhite/staging/dbs/June2010/June2010',&nbsp;'r'))&nbsp;as&nbsp;db:<br>
+&nbsp;&nbsp;&nbsp;...:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;tbl_site&nbsp;=&nbsp;db.schema_tables['site']<br>
+&nbsp;&nbsp;&nbsp;...:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;stations&nbsp;=&nbsp;<a href="#-create_station_list">create_station_list</a>(tbl_site)<br>
+&nbsp;&nbsp;&nbsp;...:<br>
+&nbsp;<br>
+In&nbsp;[7]:&nbsp;for&nbsp;station&nbsp;in&nbsp;stations:<br>
+&nbsp;&nbsp;&nbsp;...:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;print&nbsp;station<br>
+&nbsp;&nbsp;&nbsp;...:<br>
+Station&nbsp;Object<br>
+--------------<br>
+sta:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ADO<br>
+lat:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;34.5505<br>
+lon:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-117.4339<br>
+elev:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0.908<br>
+&nbsp;<br>
+Station&nbsp;Object<br>
+--------------<br>
+sta:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AGA<br>
+lat:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;33.6384<br>
+lon:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-116.4011<br>
+elev:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0.809<br>
+&nbsp;<br>
+Station&nbsp;Object<br>
+--------------<br>
+sta:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AGO<br>
+lat:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;34.1465<br>
+lon:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-118.767<br>
+elev:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0.259<br>
+&nbsp;<br>
+...<br>
+...<br>
+...</tt></dd></dl>
+ <dl><dt><a name="-map_null_values"><strong>map_null_values</strong></a>(table, obj)</dt><dd><tt>Update&nbsp;object&nbsp;attributes&nbsp;with&nbsp;None&nbsp;value&nbsp;to&nbsp;corresponding&nbsp;null<br>
+value&nbsp;from&nbsp;CSS3.0&nbsp;schema.<br>
+&nbsp;<br>
+Arguments:<br>
+table&nbsp;-&nbsp;A&nbsp;Datascope&nbsp;database&nbsp;pointer&nbsp;to&nbsp;a&nbsp;CSS3.0&nbsp;table&nbsp;to&nbsp;query&nbsp;for<br>
+null&nbsp;values.<br>
+obj&nbsp;-&nbsp;The&nbsp;object&nbsp;to&nbsp;update.<br>
+&nbsp;<br>
+Returns:<br>
+obj&nbsp;-&nbsp;The&nbsp;updated&nbsp;object.<br>
+&nbsp;<br>
+Example:<br>
+In&nbsp;[1]:&nbsp;import&nbsp;sys<br>
+&nbsp;<br>
+In&nbsp;[2]:&nbsp;import&nbsp;os<br>
+&nbsp;<br>
+In&nbsp;[3]:&nbsp;sys.path.append('%s/data/python'&nbsp;%&nbsp;os.environ['ANTELOPE'])<br>
+&nbsp;<br>
+In&nbsp;[4]:&nbsp;from&nbsp;antelope.datascope&nbsp;import&nbsp;closing,&nbsp;dbopen<br>
+&nbsp;<br>
+In&nbsp;[5]:&nbsp;from&nbsp;anfseistools.core&nbsp;import&nbsp;Origin<br>
+&nbsp;<br>
+In&nbsp;[6]:&nbsp;from&nbsp;anfseistools.ant&nbsp;import&nbsp;map_null_values<br>
+&nbsp;<br>
+In&nbsp;[7]:&nbsp;origin&nbsp;=&nbsp;Origin(48.4222,&nbsp;-123.3657,&nbsp;35.0,&nbsp;1267390800.000,&nbsp;'white')<br>
+&nbsp;<br>
+In&nbsp;[8]:&nbsp;print&nbsp;origin<br>
+Origin&nbsp;Object<br>
+-------------<br>
+lat:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;48.4222<br>
+lon:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-123.3657<br>
+depth:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;35.0<br>
+time:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1267390800.0<br>
+orid:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;None<br>
+evid:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;None<br>
+auth:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;white<br>
+jdate:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;None<br>
+nass:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;None<br>
+ndef:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;None<br>
+ndp:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;None<br>
+grn:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;None<br>
+srn:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;None<br>
+etype:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;None<br>
+review:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;None<br>
+depdp:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;None<br>
+dtype:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;None<br>
+mb:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;None<br>
+mbid:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;None<br>
+ms:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;None<br>
+msid:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;None<br>
+ml:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;None<br>
+mlid:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;None<br>
+algorithm:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;None<br>
+commid:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;None<br>
+lddate:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;None<br>
+arrivals:<br>
+&nbsp;<br>
+In&nbsp;[9]:&nbsp;with&nbsp;closing(dbopen('/Users/mcwhite/staging/dbs/June2010/June2010',&nbsp;'r'))&nbsp;as&nbsp;db:<br>
+&nbsp;&nbsp;&nbsp;...:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;tbl_origin&nbsp;=&nbsp;db.schema_tables['origin']<br>
+&nbsp;&nbsp;&nbsp;...:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;origin&nbsp;=&nbsp;<a href="#-map_null_values">map_null_values</a>(tbl_origin,&nbsp;origin)<br>
+&nbsp;&nbsp;&nbsp;...:<br>
+&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;In&nbsp;[10]:&nbsp;print&nbsp;origin<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Origin&nbsp;Object<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-------------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;lat:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;48.4222<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;lon:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-123.3657<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;depth:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;35.0<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;time:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1267390800.0<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;orid:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;evid:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;auth:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;white<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;jdate:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;nass:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ndef:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ndp:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;grn:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;srn:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;etype:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;review:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;depdp:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-999.0<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dtype:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;mb:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-999.0<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;mbid:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ms:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-999.0<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;msid:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ml:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-999.0<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;mlid:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;algorithm:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;commid:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;lddate:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-10000000000.0<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;arrivals:</tt></dd></dl>
+ <dl><dt><a name="-pf_2_cfg"><strong>pf_2_cfg</strong></a>(pf, config_file)</dt><dd><tt>Convert&nbsp;an&nbsp;Antelope&nbsp;.pf&nbsp;parameter&nbsp;file&nbsp;to&nbsp;a&nbsp;generic&nbsp;Python&nbsp;.cfg<br>
+configuration&nbsp;file.<br>
+&nbsp;<br>
+Arguments:<br>
+pf&nbsp;-&nbsp;Path&nbsp;to&nbsp;parameter&nbsp;file&nbsp;or&nbsp;None.&nbsp;If&nbsp;pf&nbsp;is&nbsp;None,&nbsp;the&nbsp;$PFPATH&nbsp;is&nbsp;searched<br>
+for&nbsp;a&nbsp;parameter&nbsp;file&nbsp;named&nbsp;pyloceq.pf.<br>
+config_file&nbsp;-&nbsp;Desired&nbsp;path&nbsp;to&nbsp;output&nbsp;configuration&nbsp;file.<br>
+&nbsp;<br>
+Returns:<br>
+0&nbsp;-&nbsp;Success<br>
+&nbsp;<br>
+Behaviour:<br>
+This&nbsp;method&nbsp;will&nbsp;read&nbsp;in&nbsp;a&nbsp;parameter&nbsp;file,&nbsp;convert&nbsp;all&nbsp;parameters<br>
+to&nbsp;.cfg&nbsp;configuration&nbsp;file&nbsp;format&nbsp;equivalent&nbsp;and&nbsp;write&nbsp;out&nbsp;a&nbsp;.cfg<br>
+file.<br>
+&nbsp;<br>
+Example:<br>
+In&nbsp;[1]:&nbsp;from&nbsp;anfseistools.ant&nbsp;import&nbsp;pf_2_cfg<br>
+&nbsp;<br>
+In&nbsp;[2]:&nbsp;<a href="#-pf_2_cfg">pf_2_cfg</a>(None,&nbsp;'test_pf_2_cfg')<br>
+Out[2]:&nbsp;0<br>
+&nbsp;<br>
+In&nbsp;[3]:&nbsp;<a href="#-pf_2_cfg">pf_2_cfg</a>('/Users/mcwhite/src/3DSeisTools/location/pyloceq',&nbsp;'test_pf_2_cfg')<br>
+Out[3]:&nbsp;0</tt></dd></dl>
+ <dl><dt><a name="-write_origin"><strong>write_origin</strong></a>(origin, dbout)</dt><dd><tt>Write&nbsp;an&nbsp;anfseistools.core.Origin&nbsp;object&nbsp;to&nbsp;an&nbsp;output&nbsp;databse.<br>
+&nbsp;<br>
+Arguments:<br>
+origin&nbsp;-&nbsp;An&nbsp;anfseistools.core.Origin&nbsp;object&nbsp;to&nbsp;be&nbsp;written&nbsp;out.<br>
+dbout&nbsp;-&nbsp;A&nbsp;datascope&nbsp;database&nbsp;pointer&nbsp;to&nbsp;an&nbsp;open&nbsp;output&nbsp;database.<br>
+&nbsp;<br>
+Returns:<br>
+0&nbsp;-&nbsp;Sucess<br>
+-1&nbsp;-&nbsp;Failure<br>
+&nbsp;<br>
+Behaviour:<br>
+This&nbsp;method&nbsp;does&nbsp;NOT&nbsp;open&nbsp;or&nbsp;close&nbsp;the&nbsp;database&nbsp;passed&nbsp;in.<br>
+&nbsp;<br>
+Caveats:<br>
+This&nbsp;method&nbsp;assumes&nbsp;that&nbsp;the&nbsp;database&nbsp;being&nbsp;written&nbsp;out&nbsp;is&nbsp;the<br>
+same&nbsp;as&nbsp;the&nbsp;input&nbsp;database&nbsp;(ie.&nbsp;NO&nbsp;arrival&nbsp;rows&nbsp;are&nbsp;created,&nbsp;they&nbsp;are<br>
+assumed&nbsp;to&nbsp;already&nbsp;exist).<br>
+&nbsp;<br>
+Example:<br>
+&nbsp;<br>
+In&nbsp;[1]:&nbsp;import&nbsp;sys<br>
+&nbsp;<br>
+In&nbsp;[2]:&nbsp;import&nbsp;os<br>
+&nbsp;<br>
+In&nbsp;[3]:&nbsp;sys.path.append('%s/data/python'&nbsp;%&nbsp;os.environ['ANTELOPE'])<br>
+&nbsp;<br>
+In&nbsp;[4]:&nbsp;from&nbsp;antelope.datascope&nbsp;import&nbsp;closing,&nbsp;dbopen<br>
+&nbsp;<br>
+In&nbsp;[5]:&nbsp;from&nbsp;anfseistools.core&nbsp;import&nbsp;Origin,&nbsp;Arrival<br>
+&nbsp;<br>
+In&nbsp;[6]:&nbsp;from&nbsp;anfseistools.ant&nbsp;import&nbsp;write_origin<br>
+&nbsp;<br>
+In&nbsp;[7]:&nbsp;arrivals&nbsp;=&nbsp;[]<br>
+&nbsp;<br>
+In&nbsp;[8]:&nbsp;arrivals&nbsp;+=&nbsp;[Arrival('SCAR',<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;597649500.000,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'P',<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;chan='BHZ',<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;deltim=0.250,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;arid=1001)]<br>
+&nbsp;<br>
+In&nbsp;[9]:&nbsp;arrivals&nbsp;+=&nbsp;[Arrival('SAN',<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1398876096.594,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'P',<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;chan='HHZ',<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;deltim=0.175,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;arid=1002)]<br>
+&nbsp;<br>
+In&nbsp;[10]:&nbsp;origin&nbsp;=&nbsp;Origin(48.4222,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-123.3657,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;35.0,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1267390800.000,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'white',<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;arrivals=arrivals,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;orid=1001,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;evid=1001,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;nass=2,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ndef=2)<br>
+&nbsp;<br>
+In&nbsp;[11]:&nbsp;with&nbsp;closing(dbopen('/Users/mcwhite/staging/dbs/June2010/June2010',&nbsp;'r+'))&nbsp;as&nbsp;db:<br>
+&nbsp;&nbsp;&nbsp;....:&nbsp;&nbsp;&nbsp;&nbsp;<a href="#-write_origin">write_origin</a>(origin,&nbsp;db)<br>
+&nbsp;&nbsp;&nbsp;....:<br>
+Out[11]:&nbsp;0</tt></dd></dl>
+</td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#55aa55">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><strong>dbTABLE_FIELDS</strong> = -347<br>
+<strong>dbTABLE_NAME</strong> = -319</td></tr></table>
+</body></html>
