@@ -1,4 +1,7 @@
 def _main():
+    """
+    Standard main() function. Execution control begins here.
+    """
     from anfseistools.ant import pf_2_cfg,\
                                      create_event_list,\
                                      write_origin
@@ -7,7 +10,6 @@ def _main():
     from antelope.datascope import closing, dbopen
     args = _parse_command_line()
     pf_2_cfg(args.pf, 'pyloceq')
-    #else: pf_2_cfg('pyloceq', 'pyloceq')
     cfg_dict = parse_cfg('pyloceq.cfg')
     locator = Locator(cfg_dict)
     with closing(dbopen(args.db, 'r+')) as db:
@@ -24,20 +26,20 @@ def _main():
                 origin = event.preferred_origin
                 print('Relocating evid: %d'
                         % event.evid)
-                #print 'BEFORE'
-                #print origin
                 origin = locator.locate_eq(origin)
                 if origin == None:
                     print 'Could not relocate orid: %d' \
                             % event.preferred_origin.orid
                     continue
                 origin.update_predarr_times(cfg_dict)
-                #print 'AFTER'
-                #print origin
                 write_origin(origin, db)
     return 0
 
 def _parse_command_line():
+    """
+    Parse command line arguments. Return dictionary-like object
+    containing results.
+    """
     from argparse import ArgumentParser
     parser = ArgumentParser()
     parser.add_argument('db', type=str, help='Input/output databse.')
