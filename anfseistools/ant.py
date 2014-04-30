@@ -1,5 +1,15 @@
+"""
+A submodule to provide interface CSS3.0 schema databases with
+anfseistools.core classes and functionality.
+
+Caveats:
+This submodule is dependant on the 5.4 version of the Antelope/Python
+API and is not backwards compatible.
+"""
 import sys
 import os
+if '%s/data/python' % os.environ['ANTELOPE'] not in sys.path:
+    sys.path.append('%s/data/python' % os.environ['ANTELOPE'])
 from antelope.datascope import DbfindEnd,\
                                dbTABLE_FIELDS,\
                                dbTABLE_NAME
@@ -9,17 +19,41 @@ import antpy
 
 def create_event_list(view):
     """
-    Create and return a list of core_tools.Event objects.
+    Create and return a list of anfseistools.core.Event objects based on
+    a CSS3.0 database.
 
     Arguments:
-    view - A datascope database pointer to a (potentially subsetted) View
-    of the Event table from the CSS3.0 database schema.
+    view - A Datascope database pointer to a (potentially subsetted) view
+    of the Event table of the CSS3.0 database schema.
 
     Return Values:
-    A list of Event objects.
+    A list of anfseistools.core.Event objects.
 
     Behaviour:
     This method does NOT open or close the database passed in.
+
+    Example:
+    In [1]: import sys
+
+    In [2]: import os
+
+    In [3]: sys.path.append('%s/data/python' % os.environ['ANTELOPE'])
+
+    In [4]: from antelope.datascope import closing, dbopen
+
+    In [5]: from anfseistools.ant import create_event_list
+
+    In [6]: with closing(dbopen('/Users/mcwhite/staging/dbs/June2010/June2010', 'r')) as db:
+       ...:     tbl_event = db.schema_tables['event']
+       ...:     tbl_event = tbl_event.subset('evid < 202555')
+       ...:     events = create_event_list(tbl_event)
+       ...:
+
+    In [7]: for event in events:
+       ...:     print event.evid, event.auth
+      ...: 
+    202551 ANF:vernon
+    202553 ANF:mabibbins
     """
     from anfseistools.core import Event, Phase
     import time as pytime
@@ -111,35 +145,79 @@ def create_event_list(view):
 
 def create_station_list(view):
     """
-    Create and return a list of core_tools.Station objects.
+    Create and return a list of anfseistools.core.Station objects.
 
     Arguments:
-    view - A datascope database pointer to a (potentially subsetted) View
+    view - A datascope database pointer to a (potentially subsetted) view
     of the Site table from the CSS3.0 database schema.
 
     Return Values:
-    A list of Station objects.
+    A list of anfseistools.core.Station objects.
 
     Behaviour:
     This method does NOT open or close the database passed in.
+
+    Example:
+    n [1]: import sys
+
+    In [2]: import os
+
+    In [3]: sys.path.append('%s/data/python' % os.environ['ANTELOPE'])
+
+    In [4]: from antelope.datascope import closing, dbopen
+
+    In [5]: from anfseistools.ant import create_station_list
+
+    In [6]: with closing(dbopen('/Users/mcwhite/staging/dbs/June2010/June2010', 'r')) as db:
+       ...:     tbl_site = db.schema_tables['site']
+       ...:     stations = create_station_list(tbl_site)
+       ...:
+
+    In [7]: for station in stations:
+       ...:     print station
+       ...:
+    Station Object
+    --------------
+    sta:     ADO
+    lat:     34.5505
+    lon:     -117.4339
+    elev:        0.908
+
+    Station Object
+    --------------
+    sta:     AGA
+    lat:     33.6384
+    lon:     -116.4011
+    elev:        0.809
+
+    Station Object
+    --------------
+    sta:     AGO
+    lat:     34.1465
+    lon:     -118.767
+    elev:        0.259
+
+    ...
+    ...
+    ...
     """
     from anfseistools.core import Station
     view = view.sort('sta', unique=True)
     station_list = []
     for record in view.iter_record():
-        name, lat, lon, elev = record.getv('sta', 'lat', 'lon', 'elev')
-        station_list += [Station(name, lat, lon, elev)]
+        sta, lat, lon, elev = record.getv('sta', 'lat', 'lon', 'elev')
+        station_list += [Station(sta, lat, lon, elev)]
     return station_list
 
-def write_origin(origin, output):
+def write_origin(origin, dbout):
     """
-    Write an origin in a given output format.
+    Write an anfseistools.core.Origin to an output databse.
 
     Arguments:
-    origin - A core_tools.Origin object to be written out.
-    output - A datascope database pointer to an open output database.
+    origin - A anfseistools.core.Origin object to be written out.
+    dbout - A datascope database pointer to an open output database.
 
-    Return Values:
+    Returns:
     0 - Sucess
     -1 - Failure
 
@@ -152,8 +230,8 @@ def write_origin(origin, output):
     assumed to already exist).
     """
     from time import time
-    tbl_origin = output.schema_tables['origin']
-    origin.orid = output.nextid('orid')
+    tbl_origin = dbout.schema_tables['origin']
+    origin.orid = dbout.nextid('orid')
     origin = map_null_values(tbl_origin, origin)
     tbl_origin.record = tbl_origin.addnull()
     tbl_origin.putv(('lat', origin.lat),
@@ -181,12 +259,12 @@ def write_origin(origin, output):
                     ('mlid', origin.mlid),
                     ('algorithm', origin.algorithm),
                     ('commid', origin.commid))
-    tbl_event = output.schema_tables['event']
+    tbl_event = dbout.schema_tables['event']
     tbl_event.record = tbl_event.find('evid == %d' % origin.evid)
     tbl_event.putv(('prefor', origin.orid))
-    tbl_assoc = output.schema_tables['assoc']
-    tbl_predarr = output.schema_tables['predarr']
-    tbl_site = output.schema_tables['site']
+    tbl_assoc = dbout.schema_tables['assoc']
+    tbl_predarr = dbout.schema_tables['predarr']
+    tbl_site = dbout.schema_tables['site']
     for arrival in origin.arrivals:
         view = tbl_site.subset('sta =~ /%s/ && ondate < _%f_ && '\
                 '(offdate == -1 || offdate > _%f_)'
@@ -262,3 +340,4 @@ def pf_2_cfg(pf, config_file):
             config.set('misc', key1, pf[key1])
     with open(config_file, 'w') as config_file:
         config.write(config_file)
+
