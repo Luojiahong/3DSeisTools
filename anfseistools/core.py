@@ -12,6 +12,7 @@ from numpy import * #Should probably be more specific
 
 def num(s):
     """
+    NEEDS TO BE UPDATED
     Convert a string to a number, choosing int or float automatically
     SLOW, don't use for large lists
      """
@@ -75,6 +76,7 @@ def parse_cfg(config_file):
 
 def load_faults():
     """
+    NEEDS TO BE UPDATED
     Load the california fault map.
     """
     fnam = 'cal_faults.dat'
@@ -94,6 +96,7 @@ def load_faults():
 
 def read_tt_vector(stanames, ind, ttdir):
     """
+    NEEDS TO BE UPDATED
     Read from binary files to create a vector of traveltimes for the
     stations in stanames at the index location ind, which is the 1D
     index stanames is a list of station names only.
@@ -112,6 +115,7 @@ def read_tt_vector(stanames, ind, ttdir):
 
 class Fmm_vgrids():
     """
+    NEEDS TO BE UPDATED
     vgrids.in is the FMM velocity file format. Looks like:
     ngrids ntypes
     nradius nlat nlon     !number of points
@@ -129,10 +133,14 @@ class Fmm_vgrids():
     ntypes will be 1 for just P, 2 for P and S
     """
     def __init__(self):
+        """
+        NEEDS TO BE UPDATED
+        """
         pass
 
     def read(self,fnam='vgrids.in'):
         """
+        NEEDS TO BE UPDATED
         Create a matrix of velocities.
         """
         self.fnam = fnam
@@ -156,6 +164,7 @@ class Fmm_vgrids():
         fid.close()
     def write(self,outfnam='out.vgrids'):
         """
+        NEEDS TO BE UPDATED
         Write to vgrids format.
         """
         self.outfnam = outfnam
@@ -176,6 +185,7 @@ class Fmm_vgrids():
 
 class Interface():
     """
+    NEEDS TO BE UPDATED
     A 2D matrix containing interface information, e.g., topography or
     moho depth.
     """
@@ -184,6 +194,7 @@ class Interface():
 
     def set_data(self, x, y, z):
         """
+        NEEDS TO BE UPDATED
         This builds the class ad-hoc. x,y,z are all numpy arrays. x,y
         are vectors, z is 2D.
         """
@@ -200,6 +211,7 @@ class Interface():
 
     def read_topo_netcdf(self, fnam, subsamp=1):
         """
+        NEEDS TO BE UPDATED
         Read a netcdf formatted topography file
         """
         from scipy.io import netcdf_file as netcdf
@@ -212,6 +224,7 @@ class Interface():
 
     def interp(self, xi, yi):
         """
+        NEEDS TO BE UPDATED
         Find the values at points xi,yi by cubic spline
         """
         import scipy.interpolate
@@ -226,6 +239,7 @@ class Interface():
 
     def write_fmm(self, fnam='out_interfaces', ifappend=False):
         """
+        NEEDS TO BE UPDATED
         Write to the fmm ascii format. ifappend should be set to True
         for any interface after the first; this will only write the z
         values and not the header
@@ -245,6 +259,7 @@ class Interface():
 
 def find_containing_cube(px, py, pz, xvec, yvec, zvec):
     """
+    NEEDS TO BE UPDATED
     Find the 8 endpoints for the cell which contains point px,py
     We take advantage of the regular grid
     Assumes the point is inside the volume defined by xvec,yvec,zvec
@@ -309,17 +324,22 @@ def find_containing_cube(px, py, pz, xvec, yvec, zvec):
 
 def find_nearest(nparray,value):
     """
+    NEEDS TO BE UPDATED
     Returns the nearest item in nparray to value
     """
     idx = (abs(nparray-value)).argmin()
     return nparray.flat[idx]
 
 def find_nearest_index(nparray,value):
+    """
+    NEEDS TO BE UPDATED
+    """
     idx = (abs(nparray-value)).argmin()
     return idx
 
 def _find_nearest(px, xvec):
     """
+    NEEDS TO BE UPDATED
     Find the nearest x in xvec
     returns index
     """
@@ -333,6 +353,7 @@ def _find_nearest(px, xvec):
 
 def read_binary_float(fid, n=0, precision='double'):
     """
+    NEEDS TO BE UPDATED
     Read the nth float value from a binary file at the with the given
     precision following python conventions, 0 is the index of the first
     value.
@@ -351,6 +372,7 @@ def read_binary_float(fid, n=0, precision='double'):
 
 def _grid_search_traveltimes_origin(arrsta, qx, qy, qz, arrvec, li):
     """
+    NEEDS TO BE UPDATED
     Find the minimum value of the origin time standard deviation
     following Ben-Zion et al., 1992 (JGR)
 
@@ -411,6 +433,7 @@ class Locator:
 
     def locate_eq(self, ev):
         """
+        NEEDS TO BE UPDATED
         Locate an earthquake based on the arrivals in ev, traveltime
         files which are already saved.
         """
@@ -532,11 +555,14 @@ class Locator:
                       ndef=len(absvec))
 
     def grid_search_traveltimes_origin(self, arrsta, qx, qy, qz, arrvec, li):
-    #Find the minimum value of the origin time standard deviation following Ben-Zion et al., 1992 (JGR)
-    #  sta          list of station names; strings
-    #   qx,qy,qz    vectors of indices to search through
-    #   arrvec      vector of absolute arrivals in the same order as sta
-    #   li          LinearIndex class for the entire traveltime grid
+        """
+        NEEDS TO BE UPDATED
+        Find the minimum value of the origin time standard deviation following Ben-Zion et al., 1992 (JGR)
+           sta          list of station names; strings
+           qx,qy,qz    vectors of indices to search through
+           arrvec      vector of absolute arrivals in the same order as sta
+           li          LinearIndex class for the entire traveltime grid
+        """
         from numpy import array #There is no reason this should be here, but the next line generated error messages if it wasn't. I'm confused
         origin_std = array([])
         origin_mean = array([])
@@ -570,12 +596,15 @@ class Locator:
         return minx,miny,minz,origin_mean[min_ind]
 
     def grid_search_traveltimes_rms(self, arrsta, qx, qy, qz, arrvec, li):
-    #Find the minimum value of some criterion by performing a grid search
-    # We aren't necessarily searching the whole grid; we may be skipping values
-    #   sta         list of station names; strings
-    #   qx,qy,qz    vectors of indices to search through
-    #   arrvec      vector of arrivals in the same order as sta
-    #   li          LinearIndex class for the entire traveltime grid
+        """
+        NEEDS TO BE UPDATED
+        Find the minimum value of some criterion by performing a grid search
+        We aren't necessarily searching the whole grid; we may be skipping values
+           sta         list of station names; strings
+           qx,qy,qz    vectors of indices to search through
+           arrvec      vector of arrivals in the same order as sta
+           li          LinearIndex class for the entire traveltime grid
+        """
         from numpy import array #There is no reason this should be here, but the next line generated error messages if it wasn't. I'm confused
         rms = array([])
         search_inds = LinearIndex(len(qx),len(qy),len(qz))
@@ -598,12 +627,15 @@ class Locator:
         return minx,miny,minz
 
     def grid_search_abs(self, arrsta, qx, qy, qz, arrvec, li):
-    #Find the minimum of the absolute value of the
-    #        calculated origin time following Ben-Zion et al., 1992 (JGR)
-    #   sta          list of station names; strings
-    #   qx,qy,qz    vectors of indices to search through
-    #   arrvec      vector of absolute arrivals in the same order as sta
-    #   li          Linear_index class for the entire traveltime grid
+        """
+        NEEDS TO BE UPDATED
+        Find the minimum of the absolute value of the
+                calculated origin time following Ben-Zion et al., 1992 (JGR)
+           sta          list of station names; strings
+           qx,qy,qz    vectors of indices to search through
+           arrvec      vector of absolute arrivals in the same order as sta
+           li          Linear_index class for the entire traveltime grid
+        """
         from numpy import array,indices #AAA MAY NEED TO DELETE
         best_misfit=100000.0
         search_inds=LinearIndex(len(qx),len(qy),len(qz))
@@ -634,6 +666,9 @@ class Locator:
         #return minx,miny,minz,origin_mean,misfit
 
     def get_subgrid_loc(self, ix, iy, iz, arrvec, arrsta, li):
+        """
+        NEEDS TO BE UPDATED
+        """
         #Test least squares on real data
         import numpy as np
         from scipy import linalg
@@ -692,9 +727,12 @@ class Locator:
         return c, resid,tt_updated,sigma,r.std()
 
     def fix_boundary_search(self, qx, nx):
-    #When performing a grid search on a subgrid, make sure you don't go off the edges
-    #  qx         search vectors, these will be modified then returned
-    #  nx         max index [li.nx]
+        """
+        NEEDS TO BE UPDATED
+        When performing a grid search on a subgrid, make sure you don't go off the edges
+          qx         search vectors, these will be modified then returned
+          nx         max index [li.nx]
+        """
         for ix in range(len(qx)):
             if qx[ix] < 0:
                 qx[ix] = 0
@@ -704,7 +742,10 @@ class Locator:
         return newqx
 
 def uniq(input):
-#Remove duplicate items from a list. Preserves order.
+    """
+    NEEDS TO BE UPDATED
+    Remove duplicate items from a list. Preserves order.
+    """
   output = []
   for x in input:
     if x not in output:
@@ -713,6 +754,7 @@ def uniq(input):
 
 class LinearIndex():
     """
+    NEEDS TO BE UPDATED
     Holds a 1D list of 3D indices and a 3D list of 1D indices
     where iz varies fastest, then iy, then ix
     The speed of this can certainly be improved
@@ -1511,7 +1553,27 @@ class Arrival():
     """
     A container class for phase data.
     """
-    def __init__(self, sta, time, phase, chan=None, deltim=None, qual=None, arid=None):
+    def __init__(self,
+                 sta,
+                 time,
+                 phase,
+                 chan=None,
+                 deltim=None,
+                 qual=None,
+                 arid=None):
+        """
+        Initialize anfseistools.core.Arrival object.
+
+        Arguments:
+        sta - Station name.
+        time - Epoch time of arrival observation.
+        phase - Phase type (Eg. P, Pn, Pb, Pg, S, Sn, Sb, Sg)
+        chan - Channel observation made on.
+        deltim - Standard deviation of observed arrival time.
+        qual - Signal onset quality
+        (Ie. i: impulsive, e: emergent, w: weak).
+        arid - Arrival ID.
+        """
         self.sta = sta
         self.time = time
         self.phase = phase
@@ -1523,6 +1585,10 @@ class Arrival():
         self.predarr = None #predicted arrival time 
 
     def __str__(self):
+        """
+        Return string representation for anfseistools.core.Arrival
+        object.
+        """
         ret = 'Arrival Object\n--------------\n'
         ret += 'sta:\t\t%s\n' % self.sta
         ret += 'time:\t\t%s\n' % self.time
