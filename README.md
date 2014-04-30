@@ -29,9 +29,9 @@ sh$: python setup.py install
 ###Step 3: Install Antelope wrapper software components
 Similarly, installing the Antelope wrappers, via the standard Antelope 
 Makefile procedure, is a one liner from the same top-level directory.
-
+```
 sh$: make install
-
+```
 ###Step 4: Compile and install external Fortran dependancy *fm3d*
 Installing the Fortran dependancy is slightly more involved, but pretty 
 straight forward. A gunzipped tar ball is included for convenience, but 
