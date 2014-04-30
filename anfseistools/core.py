@@ -74,6 +74,12 @@ def parse_cfg(config_file):
         mydict[section] = section_dict
     return eval_dict(mydict)
 
+def verify_config_file(cfg_dict):
+    tt_dir = cfg_dict['misc']['tt_map_dir']
+    if tt_dir[-1] != '/':
+        cfg_dict['misc']['tt_map_dir'] = '%s/' % tt_dir
+    return cfg_dict
+
 def load_faults():
     """
     NEEDS TO BE UPDATED
@@ -474,6 +480,7 @@ class Locator:
         for arrival in ev.arrivals:
             if not os.path.isfile('%s%s.traveltime'
                     % (self.misc['tt_map_dir'], arrival.sta)):
+                print '%s%s.traveltime' % (self.misc['tt_map_dir'], arrival.sta)
                 continue
             if arrival.phase is 'P':
                 absvec.append(arrival.time)
@@ -642,12 +649,13 @@ class Locator:
         for ix in range(len(qx)):  #Loop over the three vectors, searching every point
             for iy in range(len(qy)):
                 for iz in range(len(qz)):
-                    calctt=array([]); #initialize the calculated tt vector
-                    ind=li.get_1D(qx[ix],qy[iy],qz[iz]) #Find the vector index
-                    calctt=read_tt_vector(arrsta,
-                                          ind,
-                                          self.misc['tt_map_dir']) #Make traveltime vector from calculated times
-                    if min(calctt)<0: #If the traveltime <0, this gridpoint is null
+                    calctt = array([]) #initialize the calculated tt vector
+                    ind = li.get_1D(qx[ix],qy[iy],qz[iz]) #Find the vector index
+                    #Make traveltime vector from calculated times
+                    calctt = read_tt_vector(arrsta,
+                                            ind,
+                                            self.misc['tt_map_dir']) 
+                    if min(calctt) < 0: #If the traveltime <0, this gridpoint is null
                         continue
                     #Compute misfit measurements
                     #mini=calctt.argmin() #We will compute the origin time from the smallest traveltime Following Pavlis et al., 2004
