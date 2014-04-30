@@ -16,7 +16,7 @@ sh$: cd foo/3DSeisTools
 sh$: python setup.py install
 ```
 ###Step 2: Install miscellaneous Antelope/Python API convenience package.
-- Clone *malcolmw\/toolbox.git*
+- Clone *malcolmw/toolbox.git*
 ```
 sh$: cd foo/git_repos
 sh$: git clone https://github.com/malcolmw/toolbox.git malcolmw_toolbox
