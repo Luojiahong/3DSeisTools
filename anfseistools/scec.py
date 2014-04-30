@@ -8,7 +8,7 @@ def create_event_list(infile):
     Return Values:
     A list of Event objects.
     """
-    from temp_core_tools import Event, Phase
+    from temp_core_tools import Event, Arrival
     import time as pytime
     import calendar
     infile = open(infile, 'r')
@@ -49,7 +49,7 @@ def create_event_list(infile):
             arrtime = float(line[1]) + time
             qual = float(line[2])
             iphase = line[3]
-            event.preferred_origin.arrivals += [Phase(sta,
+            event.preferred_origin.arrivals += [Arrival(sta,
                                                       arrtime,
                                                       iphase)]
     return event_list

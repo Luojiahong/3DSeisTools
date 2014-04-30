@@ -55,7 +55,7 @@ def create_event_list(view):
     202551 ANF:vernon
     202553 ANF:mabibbins
     """
-    from anfseistools.core import Event, Phase
+    from anfseistools.core import Event, Arrival
     import time as pytime
     import calendar
     event_list = []
@@ -109,7 +109,7 @@ def create_event_list(view):
                                          'arrival.time',
                                          'iphase', 'arid', 'deltim')\
                                          for record3 in view3.iter_record()]
-            arrivals = [Phase(name, time, phase, arid=arid, deltim=deltim)
+            arrivals = [Arrival(name, time, phase, arid=arid, deltim=deltim)
                         for name, time, phase, arid, deltim in arrival_data]
             event.add_origin(lat,
                              lon,
@@ -239,20 +239,20 @@ def write_origin(origin, dbout):
 
     In [4]: from antelope.datascope import closing, dbopen
 
-    In [5]: from anfseistools.core import Origin, Phase
+    In [5]: from anfseistools.core import Origin, Arrival
 
     In [6]: from anfseistools.ant import write_origin
 
     In [7]: arrivals = []
 
-    In [8]: arrivals += [Phase('SCAR',
+    In [8]: arrivals += [Arrival('SCAR',
                                597649500.000,
                                'P',
                                chan='BHZ',
                                deltim=0.250,
                                arid=1001)]
 
-    In [9]: arrivals += [Phase('SAN',
+    In [9]: arrivals += [Arrival('SAN',
                                1398876096.594,
                                'P',
                                chan='HHZ',

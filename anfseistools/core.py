@@ -1186,14 +1186,14 @@ class Origin():
         (https://anf.ucsd.edu/pdf/css30.pdf).
 
         Example:
-        In [1]: from anfseistools.core import Origin, Phase
+        In [1]: from anfseistools.core import Origin, Arrival
 
-        In [2]: arrivals = [Phase('SND',
+        In [2]: arrivals = [Arrival('SND',
                                   1276817657.230,
                                   'P',
                                   chan='HHZ')]
 
-        In [3]: arrivals += [Phase('FRD',
+        In [3]: arrivals += [Arrival('FRD',
                                    1276817656.000,
                                    'P',
                                    chan='HHZ')]
@@ -1307,8 +1307,8 @@ class Origin():
 
     def update_predarr_times(self, cfg_dict):
         """
-        Update the anfseistools.core.Phase.tt_calc and
-        anfseistools.core.Phase.predarr fields for each Phase object in
+        Update the anfseistools.core.Arrival.tt_calc and
+        anfseistools.core.Arrival.predarr fields for each Arrival object in
         anfseistools.core.Origin object's arrivals attribute.
 
         Arguments:
@@ -1507,7 +1507,7 @@ class Origin():
                 arrival.predarr = predarr
         return 0
 
-class Phase():
+class Arrival():
     """
     A container class for phase data.
     """
