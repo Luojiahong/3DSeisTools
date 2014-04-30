@@ -323,7 +323,6 @@ def write_origin(origin, dbout):
                              stalat, stalon)
         delta = antpy.distance(stalat, stalon, origin.lat, origin.lon)
         tbl_assoc.record = tbl_assoc.addnull()
-        #print arrival.time, arrival.predarr
         timeres = -999.000 if arrival.predarr == None \
                 else (arrival.time - arrival.predarr)
         tbl_assoc.putv(('arid', arrival.arid),
@@ -335,7 +334,6 @@ def write_origin(origin, dbout):
                        ('esaz', esaz),
                        ('timeres', timeres),
                        ('vmodel', 'PyLocEQ'))
-        #print tbl_assoc.getv('arid', 'orid', 'sta', 'phase', 'delta', 'seaz', 'esaz', 'timeres', 'vmodel')
         if not arrival.predarr == None:
             tbl_predarr.record = tbl_predarr.addnull()
             tbl_predarr.putv(('arid', arrival.arid),
