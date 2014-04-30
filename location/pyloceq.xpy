@@ -10,7 +10,7 @@ def _main():
     from antelope.datascope import closing, dbopen
     args = _parse_command_line()
     pf_2_cfg(args.pf, 'pyloceq')
-    cfg_dict = parse_cfg('pyloceq.cfg')
+    cfg_dict = verify_config_file(parse_cfg('pyloceq.cfg'))
     locator = Locator(cfg_dict)
     with closing(dbopen(args.db, 'r+')) as db:
         tbl_event = db.schema_tables['event']
