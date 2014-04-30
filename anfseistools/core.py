@@ -746,11 +746,11 @@ def uniq(input):
     NEEDS TO BE UPDATED
     Remove duplicate items from a list. Preserves order.
     """
-  output = []
-  for x in input:
-    if x not in output:
-      output.append(x)
-  return output
+    output = []
+    for x in input:
+        if x not in output:
+            output.append(x)
+    return output
 
 class LinearIndex():
     """

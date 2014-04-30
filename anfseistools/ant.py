@@ -10,8 +10,7 @@ import sys
 import os
 if '%s/data/python' % os.environ['ANTELOPE'] not in sys.path:
     sys.path.append('%s/data/python' % os.environ['ANTELOPE'])
-from antelope.datascope import DbfindEnd,\
-                               dbTABLE_FIELDS,\
+from antelope.datascope import dbTABLE_FIELDS,\
                                dbTABLE_NAME
 from antelope.stock import pfin,\
                            pfread
@@ -43,7 +42,8 @@ def create_event_list(view):
 
     In [5]: from anfseistools.ant import create_event_list
 
-    In [6]: with closing(dbopen('/Users/mcwhite/staging/dbs/June2010/June2010', 'r')) as db:
+    In [6]: with closing(dbopen('/Users/mcwhite/staging/dbs/June2010/June2010',
+                                'r')) as db:
        ...:     tbl_event = db.schema_tables['event']
        ...:     tbl_event = tbl_event.subset('evid < 202555')
        ...:     events = create_event_list(tbl_event)
@@ -51,21 +51,19 @@ def create_event_list(view):
 
     In [7]: for event in events:
        ...:     print event.evid, event.auth
-      ...: 
+       ...:
     202551 ANF:vernon
     202553 ANF:mabibbins
     """
     from anfseistools.core import Event, Arrival
-    import time as pytime
-    import calendar
     event_list = []
     for record1 in view.iter_record():
         evid, evname, prefor, auth, commid, lddate = record1.getv('evid',
-                                                                 'evname',
-                                                                 'prefor',
-                                                                 'auth',
-                                                                 'commid',
-                                                                 'lddate')
+                                                                  'evname',
+                                                                  'prefor',
+                                                                  'auth',
+                                                                  'commid',
+                                                                  'lddate')
         event = Event(prefor,
                       evid=evid,
                       evname=evname,
@@ -168,7 +166,8 @@ def create_station_list(view):
 
     In [5]: from anfseistools.ant import create_station_list
 
-    In [6]: with closing(dbopen('/Users/mcwhite/staging/dbs/June2010/June2010', 'r')) as db:
+    In [6]: with closing(dbopen('/Users/mcwhite/staging/dbs/June2010/June2010',
+                                'r')) as db:
        ...:     tbl_site = db.schema_tables['site']
        ...:     stations = create_station_list(tbl_site)
        ...:
@@ -270,7 +269,8 @@ def write_origin(origin, dbout):
                              nass=2,
                              ndef=2)
 
-    In [11]: with closing(dbopen('/Users/mcwhite/staging/dbs/June2010/June2010', 'r+')) as db:
+    In [11]: with closing(dbopen('/Users/mcwhite/staging/dbs/June2010/June2010',
+                                 'r+')) as db:
        ....:    write_origin(origin, db)
        ....:
     Out[11]: 0
@@ -312,9 +312,9 @@ def write_origin(origin, dbout):
     tbl_predarr = dbout.schema_tables['predarr']
     tbl_site = dbout.schema_tables['site']
     for arrival in origin.arrivals:
-        view = tbl_site.subset('sta =~ /%s/ && ondate < _%f_ && '\
-                '(offdate == -1 || offdate > _%f_)'
-                % (arrival.sta, time(), time()))
+        view = tbl_site.subset('sta =~ /%s/ && ondate < _%f_ && ' \
+                               '(offdate == -1 || offdate > _%f_)'
+                               % (arrival.sta, time(), time()))
         view.record = 0
         stalat, stalon = view.getv('lat', 'lon')
         seaz = antpy.azimuth(stalat, stalon,
@@ -337,14 +337,14 @@ def write_origin(origin, dbout):
         if not arrival.predarr == None:
             tbl_predarr.record = tbl_predarr.addnull()
             tbl_predarr.putv(('arid', arrival.arid),
-                            ('orid', origin.orid),
-                            ('time', arrival.predarr),
-                            ('slow', delta / (arrival.predarr - origin.time)),
-                            ('seaz', antpy.azimuth(stalat,
+                             ('orid', origin.orid),
+                             ('time', arrival.predarr),
+                             ('slow', delta / (arrival.predarr - origin.time)),
+                             ('seaz', antpy.azimuth(stalat,
                                                     stalon,
                                                     origin.lat,
                                                     origin.lon)),
-                            ('esaz', antpy.azimuth(origin.lat,
+                             ('esaz', antpy.azimuth(origin.lat,
                                                     origin.lon,
                                                     stalat,
                                                     stalon)))
@@ -410,7 +410,8 @@ def map_null_values(table, obj):
     lddate:     None
     arrivals:
 
-    In [9]: with closing(dbopen('/Users/mcwhite/staging/dbs/June2010/June2010', 'r')) as db:
+    In [9]: with closing(dbopen('/Users/mcwhite/staging/dbs/June2010/June2010',
+                                'r')) as db:
        ...:      tbl_origin = db.schema_tables['origin']
        ...:      origin = map_null_values(tbl_origin, origin)
        ...:
@@ -449,7 +450,9 @@ def map_null_values(table, obj):
     from antpy import get_null_value
     for field in table.query(dbTABLE_FIELDS):
         if getattr(obj, field) == None:
-           setattr(obj, field, get_null_value(table.query(dbTABLE_NAME), field))
+            setattr(obj,
+                    field,
+                    get_null_value(table.query(dbTABLE_NAME), field))
     return obj
 
 def pf_2_cfg(pf, config_file):
@@ -476,7 +479,8 @@ def pf_2_cfg(pf, config_file):
     In [2]: pf_2_cfg(None, 'test_pf_2_cfg')
     Out[2]: 0
 
-    In [3]: pf_2_cfg('/Users/mcwhite/src/3DSeisTools/location/pyloceq', 'test_pf_2_cfg')
+    In [3]: pf_2_cfg('/Users/mcwhite/src/3DSeisTools/location/pyloceq',
+                     'test_pf_2_cfg')
     Out[3]: 0
     """
     import ConfigParser
@@ -490,9 +494,9 @@ def pf_2_cfg(pf, config_file):
     if os.path.isfile(config_file):
         try:
             os.remove(config_file)
-        except Exception:
-            print 'Could not remove potentially stale configuration file - %s.\n'\
-                    'Please remove and try again.' % config_file
+        except OSError:
+            print 'Could not remove potentially stale configuration file - %s.'\
+                    '\nPlease remove and try again.' % config_file
             sys.exit(-1)
     config = ConfigParser.RawConfigParser()
     config.add_section('misc')
