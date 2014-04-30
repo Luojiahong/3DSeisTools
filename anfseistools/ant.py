@@ -10,10 +10,6 @@ import sys
 import os
 if '%s/data/python' % os.environ['ANTELOPE'] not in sys.path:
     sys.path.append('%s/data/python' % os.environ['ANTELOPE'])
-from antelope.datascope import dbTABLE_FIELDS,\
-                               dbTABLE_NAME
-from antelope.stock import pfin,\
-                           pfread
 import antpy
 
 def create_event_list(view):
@@ -447,12 +443,13 @@ def map_null_values(table, obj):
                  lddate:        -10000000000.0
                  arrivals:
     """
-    from antpy import get_null_value
+    from antelope.datascope import dbTABLE_FIELDS,\
+                                   dbTABLE_NAME
     for field in table.query(dbTABLE_FIELDS):
         if getattr(obj, field) == None:
             setattr(obj,
                     field,
-                    get_null_value(table.query(dbTABLE_NAME), field))
+                    antpy.get_null_value(table.query(dbTABLE_NAME), field))
     return obj
 
 def pf_2_cfg(pf, config_file):
@@ -484,12 +481,8 @@ def pf_2_cfg(pf, config_file):
     Out[3]: 0
     """
     import ConfigParser
-    if 'sys' not in locals(): import sys
-    if 'os' not in locals(): import os
-    if ('pfin' and 'pfread') not in locals():
-        if '%s/data/python' % os.environ['ANTELOPE'] not in sys.path:
-            sys.path.append('%s/data/python' % os.environ['ANTELOPE'])
-        from antelope.stock import pfin, pfread
+    from antelope.stock import pfin,\
+                               pfread
     config_file = '%s.cfg' % config_file
     if os.path.isfile(config_file):
         try:
