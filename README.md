@@ -75,3 +75,23 @@ copy them into a data directory.
 ```
 sh$: cp *.in foo/fm3d_input_files/
 ```
+###Step 5: Install external focal mechanism inversion software *hashpy*
+This step is not necessary for Earthquake location inversion, only for 
+focal mechanism inversion.
+- If you don't have *numpy*, install it first, the *hashpy* module uses 
+numpy.distutils.core to compile Fortran code. The most recent version 
+for your platform should work. If you are using *pip*.
+```
+pip install numpy
+```
+Otherwise refer to http://docs.scipy.org/doc/numpy/user/install.html
+- Clone the hashpy git repository
+```
+cd foo/git_repos
+git clone https://github.com/markcwill/hashpy.git
+```
+- Navigate to the top-level directory of this repository and run setup script.
+```
+cd hashpy
+python setup.py install
+```
