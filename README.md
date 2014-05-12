@@ -23,12 +23,12 @@ sh$: python setup.py install
 ###Step 3: Install miscellaneous Antelope/Python API convenience package.
 - Clone *malcolmw/toolbox.git*
 ```
-sh$: cd foo/git_repos
+sh$: cd foo
 sh$: git clone https://github.com/malcolmw/toolbox.git malcolmw_toolbox
 ```
 - Navigate to *antpy* directory and install.
 ```
-sh$: cd malcolmw_toolbox/antpy
+sh$: cd foo/malcolmw_toolbox/antpy
 sh$: python setup.py install
 ```
 ###Step 4: Install Antelope wrapper software components
