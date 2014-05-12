@@ -8,14 +8,19 @@ modelling code by Nick Rawlinson
 (http://rses.anu.edu.au/seismology/soft/fmmcode/)
 
 #Installation
-###Step 1: Install pure Python package *anfseistools*
+###Step 1: Clone repository
+```
+sh$: cd foo
+sh$: git clone https://github.com/malcolmw/3DSeisTools.git
+```
+###Step 2: Install pure Python package *anfseistools*
 Installing the pure Python component of this software package is a simple 
 one liner from within the top-level directory of this repository.
 ```
 sh$: cd foo/3DSeisTools  
 sh$: python setup.py install
 ```
-###Step 2: Install miscellaneous Antelope/Python API convenience package.
+###Step 3: Install miscellaneous Antelope/Python API convenience package.
 - Clone *malcolmw/toolbox.git*
 ```
 sh$: cd foo/git_repos
@@ -26,13 +31,13 @@ sh$: git clone https://github.com/malcolmw/toolbox.git malcolmw_toolbox
 sh$: cd malcolmw_toolbox/antpy
 sh$: python setup.py install
 ```
-###Step 3: Install Antelope wrapper software components
+###Step 4: Install Antelope wrapper software components
 Similarly, installing the Antelope wrappers, via the standard Antelope 
 Makefile procedure, is a one liner from the same top-level directory.
 ```
 sh$: make install
 ```
-###Step 4: Compile and install external Fortran dependancy *fm3d*
+###Step 5: Compile and install external Fortran dependancy *fm3d*
 Installing the Fortran dependancy is slightly more involved, but pretty 
 straight forward. A gunzipped tar ball is included for convenience, but 
 can be downloaded at http://rses.anu.edu.au/seismology/soft/fmmcode/.  
@@ -75,7 +80,7 @@ copy them into a data directory.
 ```
 sh$: cp *.in foo/fm3d_input_files/
 ```
-###Step 5: Install external focal mechanism inversion software *hashpy*
+###Step 6: Install external focal mechanism inversion software *hashpy*
 This step is not necessary for Earthquake location inversion, only for 
 focal mechanism inversion.
 - If you don't have *numpy*, install it first, the *hashpy* module uses 
