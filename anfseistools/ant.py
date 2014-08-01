@@ -493,7 +493,11 @@ def pf_2_cfg(pf, config_file):
             sys.exit(-1)
     config = ConfigParser.RawConfigParser()
     config.add_section('misc')
-    if pf: pf = pfin('%s.pf' % pf)
+    if pf:
+        if os.path.splitext(pf)[1] == '.pf':
+            pf = pfin(pf)
+        else:
+            pf = pfin('%s.pf' % pf)
     else: pf = pfread('pyloceq')
     for key1 in pf.keys():
         if isinstance(pf[key1], dict):
