@@ -1,5 +1,11 @@
-earth_radius    6371.0
-tt_map_dir    /Users/mcwhite/staging/tt_maps/June2010/
+earth_radius            6371.0
+tt_map_dir              /Users/mcwhite/staging/tt_maps/June2010/
+mode_set.in             /Users/mcwhite/staging/fm3d/data/mode_set.in
+vgrids.in               /Users/mcwhite/staging/fm3d/data/vgrids.in
+interfaces.in           /Users/mcwhite/staging/fm3d/data/interfaces.in
+receivers.in           /Users/mcwhite/staging/fm3d/data/receivers.in
+gridsave.in           /Users/mcwhite/staging/fm3d/data/gridsave.in
+frechet.in           /Users/mcwhite/staging/fm3d/data/frechet.in
 
 propagation_grid &Arr{
     minlon      -117.80
@@ -7,7 +13,7 @@ propagation_grid &Arr{
     minz        3.0
     nlon        73
     nlat        76
-    nr          25
+    nr          27
     dlon        0.0327
     dlat        0.0273
     dr          2.0
