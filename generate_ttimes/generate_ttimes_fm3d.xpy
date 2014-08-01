@@ -3,23 +3,11 @@ import os
 import logging
 import time
 import subprocess
+import shutil
 from anfseistools.core import Station, num
 
-#tt_calculator = '/Users/mcwhite/src/3DSeisTools/fm3d/fm3d'
 tt_calculator = 'fm3d'
-def _main():
-    from anfseistools.ant import  pf_2_cfg
-    from anfseistools.core import parse_cfg
-    args = _parse_args()
-    tt_dir = 'tt_maps_%d/' % int(time.time())
-    os.mkdir(tt_dir)
-    pf_2_cfg(args.pf, '%spyloceq' % tt_dir)
-    #else: pf_2_cfg('pyloceq', 'pyloceq')
-    cfg_dict = parse_cfg('%spyloceq.cfg' % tt_dir)
-    _write_propgrid(cfg_dict)
-    station_list = _create_station_list(args, cfg_dict)
-    gen_sta_tt_maps(station_list, tt_dir)
-
+tt_dir = 'tt_maps_%d' % int(time.time())
 
 def _parse_args():
     from argparse import ArgumentParser
@@ -31,11 +19,16 @@ def _parse_args():
     parser.add_argument('-s', '--subset', type=str, help='Station subset.')
     return parser.parse_args()
 
-def _create_station_list(args, cfg_dict):
+def _parse_pfile(pfile):
+    from antelope.stock import pfin
+    from antpy import eval_pfile
+    return eval_pfile(pfin(pfile).pf2dict())
+
+def _create_station_list(args, pfile):
     from antelope.datascope import closing, dbopen
     dbpath = args.db
     subset = args.subset
-    prop_grid = cfg_dict['propagation_grid']
+    prop_grid = pfile['propagation_grid']
     minlon = float(prop_grid['minlon'])
     dlon = float(prop_grid['dlon'])
     nlon = int(prop_grid['nlon'])
@@ -44,11 +37,12 @@ def _create_station_list(args, cfg_dict):
     nlat = int(prop_grid['nlat'])
     maxlon = minlon + dlon * (nlon - 1)
     maxlat = minlat + dlat * (nlat - 1)
-    subset = 'lat > %f && lat < %f && lon > %f && lon < %f' \
-            % (minlat, maxlat, minlon, maxlon)
     station_list = []
     with closing(dbopen(dbpath, 'r')) as db:
         tbl_site = db.schema_tables['site']
+        if subset: tbl_site = tbl_site.subset(subset)
+        subset = 'lat > %f && lat < %f && lon > %f && lon < %f' \
+                % (minlat, maxlat, minlon, maxlon)
         tbl_site = tbl_site.subset(subset)
         for record in tbl_site.iter_record():
             sta, lat, lon, elev = record.getv('sta',
@@ -58,27 +52,27 @@ def _create_station_list(args, cfg_dict):
             station_list += [Station(sta, lat, lon, elev)]
     return station_list
 
-def _write_propgrid(cfg_dict):
-    prop_grid = cfg_dict['propagation_grid']
+def _write_propgrid(pfile):
+    prop_grid = pfile['propagation_grid']
     if os.path.isfile('propgrid.in'):
         os.remove('propgrid.in')
     outfile = open('propgrid.in', 'w')
-    outfile.write('%s     %s     %s          %s\n'
+    outfile.write('%8s\t%8s\t%8s\t\t\t%s\n'
             % (prop_grid['nr'],
                prop_grid['nlat'],
                prop_grid['nlon'],
                '# of propagation grid points in r, lat and lon'))
-    outfile.write('%s     %s     %s          %s\n'
+    outfile.write('%8s\t%8s\t%8s\t\t%s\n'
             % (prop_grid['dr'],
                prop_grid['dlat'],
                prop_grid['dlon'],
                'grid intervals in r (km) lat,long (deg)'))
-    outfile.write('%s     %s     %s          %s\n'
+    outfile.write('%8s\t%8s\t%8s\t\t%s\n'
             % (prop_grid['minz'],
                prop_grid['minlat'],
                prop_grid['minlon'],
                'origin of the grid height (km),lat,long (deg)'))
-    outfile.write('%s     %s          %s\n'
+    outfile.write('%8s\t%8s\t\t\t\t\t%s\n'
             % (prop_grid['refinement_factor'],
                prop_grid['ncells'],
                'refinement factor and # of propgrid cells in refined source '\
@@ -99,29 +93,25 @@ def _configure_logger():
     sh.setFormatter(formatter)
     logger.addHandler(sh)
 
-def run_fmm():
-    #Run the traveltime solver with all of the input files currently in the directory
-    #  Note: Input files should already be set using write_sources_in, etc...
-        subprocess.call(tt_calculator, shell=True)
-
-def gen_sta_tt_maps(stalist, tt_dir, if_write_binary=True):
+def gen_sta_tt_maps(stalist, if_write_binary=True):
 #Generate a travel time map for each station in the station list
-    start_time=time.time()
-    print 'Starting travel time calculation at ',start_time,'\n'
+    get_time = lambda: time.strftime('%m/%d/%Y %H:%M:%S')
+    print '%s::Starting travel time calculation.' \
+            % get_time
     for sta in stalist:
-        print 'Generating travel times for station', sta.sta, '\n'
+        print '%s::Generating travel times for station %s.' \
+                % (get_time(), sta.sta)
         #Elevation can be set to a large negative number to glue the source to the surface
-        _write_sources_file(sta.elev * -1, sta.lat, sta.lon) #Elevation is in km and negative
-        #_write_sources_file(0.0,sta.lat,sta.lon) #!!!! SET SOURCE TO 0 DEPTH
-        run_fmm()
+        #_write_sources_file(sta.elev * -1, sta.lat, sta.lon) #Elevation is in km and negative
+        _write_sources_file(0.0, sta.lat, sta.lon) #!!!! SET SOURCE TO 0 DEPTH
+        subprocess.call(tt_calculator, shell=True)
         #Create output file name
         outfnam='%s.traveltime' % sta.sta
-        subprocess.call('mv arrtimes.dat %s%s ' % (tt_dir, outfnam), shell=True)
+        subprocess.call('mv arrtimes.dat %s ' % outfnam, shell=True)
         if if_write_binary:
-            _tt_ascii_2_binary(tt_dir, outfnam)
+            _tt_ascii_2_binary(outfnam)
     elapsed_time=time.time()-start_time
-    print 'Finished travel time calculations at ',time.time(),'\n'
-    print 'Total calculation time: %8.4f seconds.\n' % (elapsed_time)
+    print '%s::Finished travel time calculation.' % get_time
 
 def _generate_tt_maps(db, write_binary=True):
     logger = logging.getLogger(sys.argv[0])
@@ -166,16 +156,16 @@ def _write_sources_file(depth, lat, lon):
     # For the first arrival from a source propagating at the surface [ 0 2 ]
     #  is the path section
 
-def _tt_ascii_2_binary(tt_dir, fnam):
+def _tt_ascii_2_binary(fnam):
 #Convert an ascii traveltime file to binary format
 # Also puts the header in a separate ascii file
 # just put "bin" and "hdr" in front of the filename
     from array import array
-    bin_path = '%sbin.%s' % (tt_dir, fnam)
-    hdr_path = '%shdr.%s' % (tt_dir, fnam)
-    print 'Reading arrival times from %s%s' % (tt_dir, fnam)
+    bin_path = 'bin.%s' % fnam
+    hdr_path = 'hdr.%s' % fnam
+    print 'Reading arrival times from %s' % fnam
     #Open and read header
-    fid = open('%s%s' % (tt_dir, fnam),'r')
+    fid = open('%s' % fnam, 'r')
     tmp=fid.readline().strip().split()
     nz=num(tmp[0]);nlat=num(tmp[1]);nlon=num(tmp[2]) #Number of grid points
     tmp=fid.readline().strip().split()
@@ -321,17 +311,16 @@ class TomoDD_MOD():
                 fid.write(outs)
         fid.close()
 
-def write_receivers_fmm(stalist,outfnam='tst_receivers.in'):
+def _write_receivers_file(stalist):
 #Writes receivers.in file for the FMM code
 #  This could be an attribute ouf the StationList class
 #  Also, fmm receiver elevations should be negative for right-handed system
-    fid = open(outfnam,'w')
-    fid.write(str(len(stalist))+'\n')
+    outfile = open(outfnam,'w')
+    outfile.write(str(len(stalist))+'\n')
     for sta in stalist:
-        fid.write('{1:.{0}f} {2:.{0}f} {3:.{0}f}'.format(
+        outfile.write('{1:.{0}f} {2:.{0}f} {3:.{0}f}'.format(
                     4,sta.elev/1000*-1,sta.lat,sta.lon) ) #Replace 0.00 with elev
-        fid.write('\n1\n1\n1\n')
-
+        outfile.write('\n1\n1\n1\n')
 
 class Traveltime_header_file():
 #This reads the header file passed as an argument by fnam, saves all of the header info to a class
@@ -350,4 +339,42 @@ class Traveltime_header_file():
        fid.close()
 
 if __name__ == '__main__':
-    sys.exit(_main())
+    args = _parse_args()
+    try:
+        print "Creating working directory - %s." % tt_dir
+        os.mkdir(tt_dir)
+    except OSError as err:
+        print 'Could not create working directory. Make sure you have write '\
+                'permission  for %s' % os.getcwd()
+        print '\n%s' % err
+        sys.exit(-1)
+    try:
+        os.chdir(tt_dir)
+    except OSError as err:
+        print 'Could not navigate to working directory.'
+        print '\n%s' % err
+        sys.exit(-1)
+    pfile = _parse_pfile(args.pf)
+    station_list = _create_station_list(args, pfile)
+    input_files = ('mode_set.in',
+                   'vgrids.in',
+                   'interfaces.in',
+                   'receivers.in',
+                   'gridsave.in',
+                   'frechet.in')
+    for input_file in input_files:
+        try:
+            print 'Copying %s to working directory' % pfile[input_file]
+            shutil.copyfile(pfile[input_file], input_file)
+        except IOError as err:
+            print "Could not copy %s to working directory" % input_file 
+            sys.exit(-1)
+    _write_propgrid(pfile)
+    gen_sta_tt_maps(station_list)
+    for input_file in input_files:
+        try:
+            print 'Removing %s from working directory' % pfile[input_file]
+            os.remove(input_file)
+        except IOError as err:
+            print "Could not remove %s from working directory" % input_file 
+    sys.exit(0)
