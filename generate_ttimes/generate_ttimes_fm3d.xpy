@@ -23,7 +23,6 @@ def _parse_args():
 
 def _parse_pfile(pfile):
     from antelope.stock import pfin
-    from antpy import eval_pfile
     return eval_pfile(pfin(pfile).pf2dict())
 
 def eval_pfile(pfile):
